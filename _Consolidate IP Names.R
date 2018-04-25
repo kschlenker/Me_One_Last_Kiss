@@ -1,0 +1,16 @@
+# How to use "rename official" to consolidate IPs and change all their names to the most current version.
+# NOTE: You must have the COP matrix report in the same folder. 
+
+library(ICPIutilities)
+library(tidyverse)
+setwd("C:/Users/nbartlett/Documents/ICPI Data/R/ICPIScripts")
+
+x<- "ICPI_MER_Structured_Dataset_PSNU_IM_20180323_v2_1.txt"
+wd <- "C:/Users/nbartlett/Documents/ICPI Data/R/ICPIScripts/"
+df<-read_msd(x,wd)
+
+df <- dplyr::rename_all(df, ~ tolower(.))
+
+df_final<- rename_official(df,wd)
+write_tsv(df_final, "ICPI_MER_Structured_Dataset_PSNU_IM_20180323_v2_1_FV_Clean.txt")
+
