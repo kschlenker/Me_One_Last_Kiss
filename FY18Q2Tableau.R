@@ -1,13 +1,19 @@
 ##   MAKING THE TABLEAU FILE FROM THE PSNU-IM FACTVIEW
 ##   Noah Bartlett
 ##   Date: Decmeber 20, 2017
+##   Updated: April 25, 2018
+
 
 
 ###########
 ### NOTES
 ###########
 
-# PAckages to install
+####
+# Before you run this R code, run the data through the "Consolidate IP Names" code.
+####
+
+# Packages to install
 library(tidyverse)
 
 # This increases the memory in R so it can run big files
