@@ -1,4 +1,4 @@
-##   MAKING THE TABLEAU FILE FROM THE psnu-IM FACTVIEW
+##   MAKING THE TABLEAU FILE FROM THE PSNU-IM FACTVIEW
 ##   Noah Bartlett
 ##   Date: Decmeber 20, 2017
 
@@ -250,6 +250,10 @@ finaldata$modality <- ifelse(finaldata$modality == "OtherMod", "Other Community"
                                                                                                                                              "")))))))))))))))))
 
 
+
+################################################
+# RENAME THE COLUMN HEADINGS FROM ALL LOWERCASE
+################################################
 
 names(finaldata)[names(finaldata) == 'operatingunit'] <- 'Operating Unit'
 names(finaldata)[names(finaldata) == 'snu1'] <- 'SNU'
