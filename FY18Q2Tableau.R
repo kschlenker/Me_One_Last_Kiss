@@ -4,14 +4,13 @@
 ##   Updated: April 25, 2018
 
 
-
 ###########
 ### NOTES
 ###########
 
-####
+############################################################################################
 # Before you run this R code, run the data through the "Consolidate IP Names" code.
-####
+############################################################################################
 
 # Packages to install
 library(tidyverse)
@@ -24,9 +23,8 @@ memory.limit(size=56000)
 setwd("C:/Users/nbartlett/Documents/ICPI Data/R/ICPIScripts")
 
 # Import data (Change as needed)
-# Uses the PSNU_IM file
+# Uses the PSNU_IM file, already run through the Consolidate IP names code
 data=read.csv("ICPI_MER_Structured_Dataset_PSNU_IM_20180323_v2_1_FV_Clean.txt",sep="\t",header = T)
-
 
 
 #########################################################################################
@@ -35,7 +33,6 @@ data=read.csv("ICPI_MER_Structured_Dataset_PSNU_IM_20180323_v2_1_FV_Clean.txt",s
 #########################################################################################
 
 data$fy2018apr=data$fy2018q1
-
 
 #########################################################################################
 # Select a subset of indicators to be included in the Tableau tool
@@ -50,9 +47,6 @@ data <- data[(data$indicator %in% c("GEND_GBV", "HRH_PRE", "HTS_SELF", "HTS_TST"
                                     "PMTCT_STAT_NewlyIdentified_POSITIVE", "PMTCT_STAT_POS", "PP_PREV",
                                     "PrEP_NEW", "TB_ART", "TB_STAT", "TX_CURR", "TX_NEW", "TX_PVLS",
                                     "TX_RET", "TX_TB", "VMMC_CIRC")),] 
-
-
-
 
 ###################################
 # Add DREAMS Districts to file
@@ -87,7 +81,6 @@ dreams<-c(
 
 # Creates a TRUE/FALSE column if PSNU is listed above as a DREAMS district
 data$dreams <- data$psnu %in% dreams
-
 
 #########################
 # Add TX_NET_NEW to file
@@ -127,7 +120,6 @@ net_new=
   net_new %>% 
   select(-starts_with("fy20"))
 
-
 # Rename new columns with correct names (i.e. fy2016q1)
 names(net_new) <- gsub("y2", "fy2", names(net_new))
 
@@ -142,7 +134,7 @@ data.netnew=bind_rows(data,net_new)
 # Reshape data for use in Tableau
 ################################# 
 
-# Create three dataframes - results, targets and apr - to be combined.
+# Create three dataframes - Results, Targets and APR - to be combined.
 
 # These are the columns which will be included in Tableau
 # This list can be modified as needed.
@@ -151,14 +143,14 @@ TableauColumns<-c("operatingunit", "snu1", "snu1uid", "psnu", "psnuuid", "curren
                   "indicator","numeratordenom", "indicatortype","standardizeddisaggregate", 
                   "age","sex","resultstatus","otherdisaggregate","modality", "ismcad")
 
-# Create results dataframe. Only collects quarterly data starting in fy2015q3
+# Create results dataframe. Only collects quarterly data starting in FY2015Q3
 results<- data.netnew %>%
   select(-fy2015q2, -contains("targets"), -contains("apr")) %>% 
   
   # Columns that will be used in Tableau.
   group_by_at(TableauColumns) %>%
   
-  # Creates one Values column and one period column (e.g. fy2017q3)
+  # Creates one values column and one period column (e.g. FY2017Q3)
   summarize_at(vars(starts_with("fy2")), funs(sum(., na.rm=TRUE))) %>%
   ungroup %>%
   gather(period, values, starts_with("fy2")) %>% 
@@ -172,26 +164,26 @@ targets<- data.netnew %>%
   # Columns that will be used in Tableau.
   group_by_at(TableauColumns) %>%
   
-  # Creates one Values column and one period column (e.g. fy2016_targets)
+  # Creates one values column and one period column (e.g. FY2016_Targets)
   summarize_at(vars(starts_with("fy2")), funs(sum(., na.rm=TRUE))) %>%
   ungroup %>%
   gather(period, values, starts_with("fy2")) %>%
   filter(values !=0)
 
-# Create apr dataframe for FY15, FY16, FY17 apr results
+# Create APR dataframe for FY15, FY16, FY17 APR results
 apr<- data.netnew %>%
   select(-contains("targets"),-contains("Q") ) %>% 
   
   # Columns that will be used in Tableau.
   group_by_at(TableauColumns) %>%
   
-  # Creates one Values column and one period column (e.g. fy2016apr)
+  # Creates one values column and one period column (e.g. FY2016APR)
   summarize_at(vars(starts_with("fy2")), funs(sum(., na.rm=TRUE))) %>%
   ungroup %>%
   gather(period, values, starts_with("fy2")) %>%
   filter(values !=0)
 
-# Creates a column in each dataframe to label values either Results or targets
+# Creates a column in each dataframe to label values either Results or Targets
 results$ResultsOrTargets<-"Quarterly Results"
 targets$ResultsOrTargets<-"Targets"
 apr$ResultsOrTargets<-"Annual Results"
@@ -199,7 +191,7 @@ apr$ResultsOrTargets<-"Annual Results"
 
 # Changes quarters into dates - PART 1 
 #     Will change back to quarters in Tableau
-#     Why do we have to do this? Because Tableau assumes that q1 starts in January. 
+#     Why do we have to do this? Because Tableau assumes that Q1 starts in January. 
 #     Although you can set Tableau to have fiscal years have an October start, by that 
 #     time, Tableau has already assigned the quarterly data to have a January start
 #     and your dates will all be off by one quarter. 
@@ -212,7 +204,7 @@ apr$period<- gsub("apr", "q1",apr$period)
 
 
 # Combines all three dataframes into one
-finaldata=bind_rows(results,targets, apr)
+finaldata=bind_rows(results, targets, apr)
 
 # Changes quarters into dates - PART 2
 #     YES - I know there are better ways to do this. But this works. And frankly, finding
@@ -231,6 +223,8 @@ finaldata$period[finaldata$period=="17q2"] <- "1/1/2017"
 finaldata$period[finaldata$period=="17q3"] <- "4/1/2017"
 finaldata$period[finaldata$period=="17q4"] <- "7/1/2017"
 finaldata$period[finaldata$period=="18q1"] <- "10/1/2017"
+#finaldata$period[finaldata$period=="18q2"] <- "1/1/2018"
+#finaldata$period[finaldata$period=="18q3"] <- "4/1/2018"
 
 #####################################
 # RENAME THE HIV TESTING MODALITIES 
