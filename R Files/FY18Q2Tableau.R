@@ -114,7 +114,9 @@ net_new<-
          y2017apr=fy2017q4-fy2016apr,
          y2018q1=fy2018q1-fy2017q4,
          y2018apr=fy2018q1-fy2017apr)  # <- ADD NECESSARY VARIABLES EACH QUARTER #
-
+# For Q2 replace the one line above this with the two lines below this. 
+#        y2018q2=fy2018q2-fy2018q1,
+#        y2018apr=fy2018q2-fy2017apr)
 
 # Delete old columns
 net_new=
