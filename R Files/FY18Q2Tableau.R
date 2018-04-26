@@ -32,7 +32,8 @@ data=read.csv("ICPI_MER_Structured_Dataset_PSNU_IM_20180323_v2_1_FV_Clean.txt",s
 # q1 is easy. q2 and q3 will be more complicated (point-in-time vs. cumulatuive data)
 #########################################################################################
 
-data$fy2018apr=data$fy2018q1
+# data$fy2018apr=data$fy2018q1 # <- For Q1
+data$fy2018apr <- ifelse(data$indicator == "TX_CURR", data$fy2018q2, data$fy2018q1 + data$fy2018q2) # <- For Q2
 
 #########################################################################################
 # Select a subset of indicators to be included in the Tableau tool
