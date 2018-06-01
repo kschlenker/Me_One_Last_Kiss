@@ -14,26 +14,43 @@
 
 # Packages to install
 library(tidyverse)
+library(magrittr)
 
 # This increases the memory in R so it can run big files
 memory.limit(size=56000)
 
 
 # Set-up working directory (Change as needed)
-setwd("C:/Users/nbartlett/Documents/ICPI Data/R/ICPIScripts")
+setwd("C:/Users/nbartlett/Documents/ICPI Data/MER/ICPI FactView 2018.05.15")
 
 # Import data (Change as needed)
 # Uses the PSNU_IM file, already run through the Consolidate IP names code
-data=read.csv("ICPI_MER_Structured_Dataset_PSNU_IM_20180323_v2_1_FV_Clean.txt",sep="\t",header = T)
+data=read.csv("ICPI_MER_Structured_Dataset_PSNU_IM_FY17-18_20180515_v1_1_FV_Clean.txt",sep="\t",header = T)
 
+#################
+##   This section was put in for Q2 because the data were being loaded as factors not as integers
+##   We were in a hurry to get the data out.
+##   This code was written like this because every other attempt I tried crashed my computer.
+##   When we have more time, can someone help me "clean" this section up so it's more efficient?
+####################
+
+data[,35]<-as.integer(as.character(data[,35]))
+data[,36]<-as.integer(as.character(data[,36]))
+data[,37]<-as.integer(as.character(data[,37]))
+data[,38]<-as.integer(as.character(data[,38]))
+data[,39]<-as.integer(as.character(data[,39]))
+data[,40]<-as.integer(as.character(data[,40]))
+data[,41]<-as.integer(as.character(data[,41]))
+data[,42]<-as.integer(as.character(data[,42]))
+data[,43]<-as.integer(as.character(data[,43]))
+data[is.na(data)] <- 0
 
 #########################################################################################
 # For non-q4 data, add a YTD column
-# q1 is easy. q2 and q3 will be more complicated (point-in-time vs. cumulatuive data)
 #########################################################################################
 
 # data$fy2018apr=data$fy2018q1 # <- For Q1
-data$fy2018apr <- ifelse(data$indicator == "TX_CURR", data$fy2018q2, data$fy2018q1 + data$fy2018q2) # <- For Q2
+data$fy2018apr <- ifelse(data$indicator == "TX_CURR", data$fy2018q2, (data$fy2018q1 + data$fy2018q2)) # <- For Q2
 
 #########################################################################################
 # Select a subset of indicators to be included in the Tableau tool
@@ -96,27 +113,14 @@ net_new<-
   net_new %>% 
   mutate_at(vars(starts_with("fy2")),funs(ifelse(is.na(.),0,.))) %>%   
   mutate(indicator="TX_NET_NEW",
-         y2015q2=fy2015q2,
-         y2015q3=0,
-         y2015q4=fy2015q4-fy2015q2,
-         y2015apr=fy2015q4,
-         y2016_targets=fy2016_targets-fy2015apr,
-         y2016q1=0,
-         y2016q2=fy2016q2-fy2015apr,
-         y2016q3=0,
-         y2016q4=fy2016q4-fy2016q2,
-         y2016apr=fy2016q4-fy2015apr,
-         y2017_targets=fy2017_targets-fy2016apr,
-         y2017q1=fy2017q1-fy2016q4,
+         y2017q1=fy2017q1+0,
          y2017q2=fy2017q2-fy2017q1,
          y2017q3=fy2017q3-fy2017q2,
          y2017q4=fy2017q4-fy2017q3,
-         y2017apr=fy2017q4-fy2016apr,
+         y2017apr=fy2017q4+0,
          y2018q1=fy2018q1-fy2017q4,
-         y2018apr=fy2018q1-fy2017apr)  # <- ADD NECESSARY VARIABLES EACH QUARTER #
-# For Q2 replace the one line above this with the two lines below this. 
-#        y2018q2=fy2018q2-fy2018q1,
-#        y2018apr=fy2018q2-fy2017apr)
+         y2018q2=fy2018q2-fy2018q1,
+         y2018apr=fy2018q2-fy2017apr)  # <- ADD NECESSARY VARIABLES EACH QUARTER #
 
 # Delete old columns
 net_new=
@@ -128,6 +132,7 @@ names(net_new) <- gsub("y2", "fy2", names(net_new))
 
 # Corrects for an error involving vectors in R
 data$indicator <- as.character(data$indicator)
+data$fy2018q2 <- as.integer(data$fy2018q2)
 
 # Adds TX_NET_NEW dataframe to FactView dataframe
 data.netnew=bind_rows(data,net_new)
@@ -141,14 +146,14 @@ data.netnew=bind_rows(data,net_new)
 
 # These are the columns which will be included in Tableau
 # This list can be modified as needed.
-TableauColumns<-c("operatingunit", "snu1", "snu1uid", "psnu", "psnuuid", "currentsnuprioritization", "dreams",
+TableauColumns<-c("operatingunit", "snu1", "snu1uid", "psnu", "psnuuid", "snuprioritization", "dreams",
                   "primepartner", "fundingagency","implementingmechanismname", "mechanismuid",
                   "indicator","numeratordenom", "indicatortype","standardizeddisaggregate", 
-                  "age","sex","resultstatus","otherdisaggregate","modality", "ismcad")
+                  "ageasentered", "agefine", "agesemifine", "agecoarse", "sex","resultstatus","otherdisaggregate","modality", "ismcad")
 
 # Create results dataframe. Only collects quarterly data starting in FY2015Q3
 results<- data.netnew %>%
-  select(-fy2015q2, -contains("targets"), -contains("apr")) %>% 
+  select(-contains("targets"), -contains("apr")) %>% 
   
   # Columns that will be used in Tableau.
   group_by_at(TableauColumns) %>%
@@ -213,20 +218,12 @@ finaldata=bind_rows(results, targets, apr)
 #     YES - I know there are better ways to do this. But this works. And frankly, finding
 #     another solution was harder than it should have been. 
 
-finaldata$period[finaldata$period=="15q1"] <- "10/1/2014"
-finaldata$period[finaldata$period=="15q2"] <- "1/1/2015"
-finaldata$period[finaldata$period=="15q3"] <- "4/1/2015"
-finaldata$period[finaldata$period=="15q4"] <- "7/1/2015"
-finaldata$period[finaldata$period=="16q1"] <- "10/1/2015"
-finaldata$period[finaldata$period=="16q2"] <- "1/1/2016"
-finaldata$period[finaldata$period=="16q3"] <- "4/1/2016"
-finaldata$period[finaldata$period=="16q4"] <- "7/1/2016"
 finaldata$period[finaldata$period=="17q1"] <- "10/1/2016"
 finaldata$period[finaldata$period=="17q2"] <- "1/1/2017"
 finaldata$period[finaldata$period=="17q3"] <- "4/1/2017"
 finaldata$period[finaldata$period=="17q4"] <- "7/1/2017"
 finaldata$period[finaldata$period=="18q1"] <- "10/1/2017"
-#finaldata$period[finaldata$period=="18q2"] <- "1/1/2018"
+finaldata$period[finaldata$period=="18q2"] <- "1/1/2018"
 #finaldata$period[finaldata$period=="18q3"] <- "4/1/2018"
 
 #####################################
@@ -234,23 +231,41 @@ finaldata$period[finaldata$period=="18q1"] <- "10/1/2017"
 #####################################
 
 finaldata$modality <- ifelse(finaldata$modality == "OtherMod", "Other Community",
-                             ifelse(finaldata$modality == "IndexMod", "Community Index Testing",
+                             ifelse(finaldata$modality == "IndexMod", "Community Index",
                                     ifelse(finaldata$modality == "VCTMod", "Community VCT",
-                                           ifelse(finaldata$modality == "VMMC", "VMMC",
-                                                  ifelse(finaldata$modality == "VCT", "VCT",
-                                                         ifelse(finaldata$modality == "OtherPITC", "Other PITC",
-                                                                ifelse(finaldata$modality == "Index", "Facility Index Testing",
-                                                                       ifelse(finaldata$modality == "MobileMod", "Community Mobile Testing",
-                                                                              ifelse(finaldata$modality == "PMTCT ANC", "PMTCT ANC",
-                                                                                     ifelse(finaldata$modality == "Pediatric", "Pediatrics",
-                                                                                            ifelse(finaldata$modality == "TBClinic", "TB Clinics",
-                                                                                                   ifelse(finaldata$modality == "Malnutrition", "Malnutrition Facilities",
-                                                                                                          ifelse(finaldata$modality == "STI Clinic", "STI Clinics",
-                                                                                                                 ifelse(finaldata$modality == "Emergency Ward", "Emergency Wards",
-                                                                                                                        ifelse(finaldata$modality == "Inpat", "Inpatient",
-                                                                                                                               ifelse(finaldata$modality == "HomeMod", "Community Home-Based",
-                                                                                                                                      ifelse(finaldata$modality == "KeyPop", "Key Populations",
-                                                                                                                                             "")))))))))))))))))
+                                           ifelse(finaldata$modality == "VCT", "VCT",
+                                                  ifelse(finaldata$modality == "Voluntary Counseling & Testing standalone", "VCT",
+                                                         ifelse(finaldata$modality == "Voluntary Counseling & Testing co-located", "VCT",
+                                                                ifelse(finaldata$modality == "VMMC", "VMMC",
+                                                                       ifelse(finaldata$modality == "Voluntary Medical Male Circumcision", "VMMC",
+                                                                              ifelse(finaldata$modality == "OtherPITC", "Other PITC",
+                                                                                     ifelse(finaldata$modality == "Other Service Delivery Point", "Other PITC",
+                                                                                            ifelse(finaldata$modality == "Index", "Index",
+                                                                                                   ifelse(finaldata$modality == "Index Testing", "Index",
+                                                                                                          ifelse(finaldata$modality == "MobileMod", "Community Mobile",
+                                                                                                                 ifelse(finaldata$modality == "Mobile", "Community Mobile",
+                                                                                                                        ifelse(finaldata$modality == "PMTCT", "PMTCT (ANC)",
+                                                                                                                               ifelse(finaldata$modality == "PMTCT ANC", "PMTCT (ANC)",
+                                                                                                                                      ifelse(finaldata$modality == "Antenatal Clinic", "PMTCT (ANC)",
+                                                                                                                                             ifelse(finaldata$modality == "Pediatric", "Pediatrics",
+                                                                                                                                                    ifelse(finaldata$modality == "Pediatrics", "Pediatrics",
+                                                                                                                                                           ifelse(finaldata$modality == "Under 5 Clinic", "Pediatrics",
+                                                                                                                                                                  ifelse(finaldata$modality == "TBClinic", "TB",
+                                                                                                                                                                         ifelse(finaldata$modality == "Tuberculosis","TB",
+                                                                                                                                                                                ifelse(finaldata$modality == "Malnutrition", "Malnutrition",
+                                                                                                                                                                                       ifelse(finaldata$modality == "Malnutrition facilities", "Malnutrition",
+                                                                                                                                                                                              ifelse(finaldata$modality == "STI Clinic", "STI",
+                                                                                                                                                                                                     ifelse(finaldata$modality == "Inpat", "Inpatient",
+                                                                                                                                                                                                            ifelse(finaldata$modality == "Inpatient", "Inpatient",
+                                                                                                                                                                                                                   ifelse(finaldata$modality == "Emergency", "Emergency", 
+                                                                                                                                                                                                                          ifelse(finaldata$modality == "Emergency Ward", "Emergency", 
+                                                                                                                                                                                                                                 ifelse(finaldata$modality == "HomeMod", "Community Home-Based",
+                                                                                                                                                                                                                                        ifelse(finaldata$modality == "Home-based", "Community Home-Based",
+                                                                                                                                                                                                                                               ifelse(finaldata$modality == "Outpatient Department", "Outpatient", 
+                                                                                                                                                                                                                                                      ifelse(finaldata$modality == "Labor & Delivery", "L&D", 
+                                                                                                                                                                                                                                                             ifelse(finaldata$modality == "HIV Care and Treatment Clinic", "Care and Treatment", 
+                                                                                                                                                                                                                                                                    ifelse(finaldata$modality == "KeyPop", "Key Populations",
+                                                                                                                                                                                                                                                                           "")))))))))))))))))))))))))))))))))))
 
 
 
@@ -275,5 +290,5 @@ names(finaldata)[names(finaldata) == 'otherdisaggregate'] <- 'Other Disaggregate
 #finaldata$values<-format(finaldata$values, digits=1)
 finaldata = mutate_if(finaldata, is.numeric, as.integer)
 
-write_tsv(finaldata, "FY18Q1.PSNU.IM.2018.04.25.txt")
+write_tsv(finaldata, "FY18Q2.PSNU.IM.2018.05.30.txt")
 
