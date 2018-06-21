@@ -14,8 +14,11 @@ finaldata$implementingmechanismname <- replace(as.character(finaldata$implementi
 linkages <- grep("LINKAGES|Linkages", finaldata$implementingmechanismname)
 finaldata$implementingmechanismname <- replace(as.character(finaldata$implementingmechanismname), linkages, "LINKAGES")
 
-youthpower <- grep("Youth Power|YouthPower", finaldata$implementingmechanismname)
+youthpower <- grep("CAPACITY PLUS|Capacity+", finaldata$implementingmechanismname)
 finaldata$implementingmechanismname <- replace(as.character(finaldata$implementingmechanismname), youthpower, "YouthPower")
+
+capplus <- grep("Youth Power|YouthPower", finaldata$implementingmechanismname)
+finaldata$implementingmechanismname <- replace(as.character(finaldata$implementingmechanismname), capplus, "Capacity+")
 
 m2m <- grep("mother2mothers|Mothers 2 Mothers|Mothers to Mothers", finaldata$primepartner)
 finaldata$primepartner <- replace(as.character(finaldata$primepartner), m2m, "Mothers 2 Mothers")
@@ -50,4 +53,5 @@ finaldata$primepartner <- replace(as.character(finaldata$primepartner), uzsom, "
 urc <- grep("University Research Corporation|University Research Council", finaldata$primepartner)
 finaldata$primepartner <- replace(as.character(finaldata$primepartner), urc, "University Research Corporation, LLC")
 
-rm(fc, aidsfree, assist, challengetb, linkages, youthpower, m2m, uspc, jsi, rtc, ccrd, fhi360, pact, wvi, psi, uzsom, urc)
+rm(fc, aidsfree, assist, challengetb, linkages, youthpower, capplus, 
+   m2m, uspc, jsi, rtc, ccrd, fhi360, pact, wvi, psi, uzsom, urc)
