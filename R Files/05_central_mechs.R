@@ -14,10 +14,10 @@ finaldata$implementingmechanismname <- replace(as.character(finaldata$implementi
 linkages <- grep("LINKAGES|Linkages", finaldata$implementingmechanismname)
 finaldata$implementingmechanismname <- replace(as.character(finaldata$implementingmechanismname), linkages, "LINKAGES")
 
-youthpower <- grep("CAPACITY PLUS|Capacity+", finaldata$implementingmechanismname)
+youthpower <- grep("Youth Power|YouthPower", finaldata$implementingmechanismname)
 finaldata$implementingmechanismname <- replace(as.character(finaldata$implementingmechanismname), youthpower, "YouthPower")
 
-capplus <- grep("Youth Power|YouthPower", finaldata$implementingmechanismname)
+capplus <- grep("CAPACITY PLUS|Capacity+", finaldata$implementingmechanismname)
 finaldata$implementingmechanismname <- replace(as.character(finaldata$implementingmechanismname), capplus, "Capacity+")
 
 hfg <- grep("HFG", finaldata$implementingmechanismname)
