@@ -24,12 +24,11 @@ coarse_15plus <- finaldata$ageasentered %in% c("20-24" , "25-49", "15+", "50+", 
 coarse_u15 <- finaldata$ageasentered %in% c("<01" , "<15", "01-09", "10-14", "<=02 Months",
                                       "02 - 12 Months", "02 Months - 09 Years", "<02 Months",
                                       "<10", "01-04", "05-09", "05-14", "01-14")
-                                      
 coarse_incompatable <- finaldata$ageasentered %in% c("<18")
 
 finaldata$agecoarse[coarse_15plus] <- "15+"
 finaldata$agecoarse[coarse_u15] <- "<15"
-finaldata$agecoarse[coarse_incompatable] <- "Not coarse compatable"
+finaldata$agecoarse[coarse_incompatable] <- "Not coarse age compatable"
 
 
 ##################### 
@@ -52,7 +51,7 @@ finaldata$agesemifine[semifine_15.19] <- "15-19"
 finaldata$agesemifine[semifine_20.24] <- "20-24"
 finaldata$agesemifine[semifine_25.49] <- "25-49"
 finaldata$agesemifine[semifine_50plus] <- "50+"
-finaldata$agesemifine[semifine_incompatable] <- "Not semifine compatable"
+finaldata$agesemifine[semifine_incompatable] <- "Not semifine age compatable"
 
 
 ################### 
@@ -82,5 +81,35 @@ finaldata$agefine[fine_30.34] <- "30-34"
 finaldata$agefine[fine_35.39] <- "35-39"
 finaldata$agefine[fine_40.49] <- "40-49"
 finaldata$agefine[fine_50plus] <- "50+"
-finaldata$agefine[fine_incompatable] <- "Not fine compatable"
+finaldata$agefine[fine_incompatable] <- "Not fine age compatable"
+
+################### 
+# OVC age disags
+###################
+ovc_18plus <- finaldata$ageasentered %in% c("20-24" , "25-49", "50+", "25-29", "30-49", "18-24", "25+",
+                                            "30-34", "35-39", "40-49", "18+", "20+")
+ovc_u18 <- finaldata$ageasentered %in% c("<01" , "<15", "01-09", "10-14", "<=02 Months",
+                                            "02 - 12 Months", "02 Months - 09 Years", "<02 Months",
+                                            "<10", "01-04", "05-09", "05-14", "01-14", "15-17", "<18")
+
+ovc_incompatable <- finaldata$ageasentered %in% c("15+", "15-19")
+
+finaldata$ageovc[ovc_18plus] <- "18+"
+finaldata$ageovc[ovc_u18] <- "<18"
+finaldata$ageovc[ovc_incompatable] <- "Not OVC age compatable"
+
+################### 
+# VMMC age disags
+###################
+vmmc_30plus <- finaldata$ageasentered %in% c("50+", "30-49", "18-24", "30-34", "35-39", "40-49")
+vmmc_15.29 <- finaldata$ageasentered %in% c("15-19","20-24" ,"25-29", "15-17")
+vmmc_u15 <- finaldata$ageasentered %in% c("<01" , "<15", "01-09", "10-14", "<=02 Months",
+                                            "02 - 12 Months", "02 Months - 09 Years", "<02 Months",
+                                            "<10", "01-04", "05-09", "05-14", "01-14")
+vmmc_incompatable <- finaldata$ageasentered %in% c("<18", "25-49","15+", "25+", "18+", "20+")
+
+finaldata$agevmmc[vmmc_30plus] <- "30+"
+ffinaldata$agevmmc[vmmc_15.29] <- "15-29"
+finaldata$agevmmc[vmmc_u15] <- "<15"
+finaldata$agevmmc[vmmc_incompatable] <- "Not vmmc age compatable"
 

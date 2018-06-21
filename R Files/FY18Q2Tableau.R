@@ -100,9 +100,10 @@ dreams<-c(
 # Creates a TRUE/FALSE column if PSNU is listed above as a DREAMS district
 data$dreams <- data$psnu %in% dreams
 
-#########################
-# Add TX_NET_NEW to file
-#########################
+# ________________________
+#
+#  ADD TX_NET_NEW TO FILE
+# ________________________
 
 # Create new dataframe with just TX_CURR
 net_new= data %>%
@@ -138,15 +139,17 @@ data$fy2018q2 <- as.integer(data$fy2018q2)
 data.netnew=bind_rows(data,net_new)
 
 
-################################# 
-# Reshape data for use in Tableau
-################################# 
+# ___________________________________
+#
+#  RESHAPE DATA FOR USE IN TABLEAU
+# ___________________________________
+
 
 # Create three dataframes - Results, Targets and APR - to be combined.
 
 # These are the columns which will be included in Tableau
 # This list can be modified as needed.
-TableauColumns<-c("operatingunit", "snu1", "snu1uid", "psnu", "psnuuid", "snuprioritization", "dreams",
+TableauColumns<-c("operatingunit", "countryname", "snu1", "snu1uid", "psnu", "psnuuid", "snuprioritization", "dreams",
                   "primepartner", "fundingagency","implementingmechanismname", "mechanismuid",
                   "indicator","numeratordenom", "indicatortype","standardizeddisaggregate", 
                   "ageasentered", "agefine", "agesemifine", "agecoarse", "sex","resultstatus","otherdisaggregate","modality", "ismcad")
@@ -227,35 +230,42 @@ finaldata$period[finaldata$period=="18q2"] <- "1/1/2018"
 #finaldata$period[finaldata$period=="18q3"] <- "4/1/2018"
 
 
-############################################
-#                 AGE DISAGS
-############################################
+# __________________________________________________________________
+#
+#  -------------------------  AGE DISAGS  ------------------------- 
+# __________________________________________________________________
+
 
 finaldata$agecoarse=NA
 finaldata$agesemifine=NA
 finaldata$agefine=NA
+finaldata$ageovc=NA
+finaldata$agevmmc=NA
 
 
-################### 
-# Coarse age disags
-###################
+# _____________________________
+#
+#  COARSE AGE DISAGS (<15, 15+)
+# _____________________________ 
+
 coarse_15plus <- finaldata$ageasentered %in% c("20-24" , "25-49", "15+", "50+", "15-19", 
                                                "25-29", "30-49", "15-17", "18-24", "25+",
                                                "30-34", "35-39", "40-49", "18+", "20+")
 coarse_u15 <- finaldata$ageasentered %in% c("<01" , "<15", "01-09", "10-14", "<=02 Months",
                                             "02 - 12 Months", "02 Months - 09 Years", "<02 Months",
                                             "<10", "01-04", "05-09", "05-14", "01-14")
-
 coarse_incompatable <- finaldata$ageasentered %in% c("<18")
 
 finaldata$agecoarse[coarse_15plus] <- "15+"
 finaldata$agecoarse[coarse_u15] <- "<15"
-finaldata$agecoarse[coarse_incompatable] <- "Not coarse compatable"
+finaldata$agecoarse[coarse_incompatable] <- "Not coarse age compatable"
 
 
-##################### 
-# Semifine age disags
-#####################
+# __________________________________________________________________
+#
+#  SEMIFINE AGE DISAGS (<01, 1-9. 10-14, 15-19, 20-24, 25-49, 50+)
+# __________________________________________________________________
+
 semifine_u1 <- finaldata$ageasentered %in% c("<01", "<=02 Months", "02 - 12 Months", "<02 Months")
 semifine_1.9 <- finaldata$ageasentered %in% c("01-09", "01-04", "05-09")
 semifine_10.14 <- finaldata$ageasentered %in% c("10-14")
@@ -273,12 +283,13 @@ finaldata$agesemifine[semifine_15.19] <- "15-19"
 finaldata$agesemifine[semifine_20.24] <- "20-24"
 finaldata$agesemifine[semifine_25.49] <- "25-49"
 finaldata$agesemifine[semifine_50plus] <- "50+"
-finaldata$agesemifine[semifine_incompatable] <- "Not semifine compatable"
+finaldata$agesemifine[semifine_incompatable] <- "Not semifine age compatable"
 
 
-################### 
-# Fine age disags
-###################
+# _____________________________________________________________________________________
+#
+#  FINE AGE DISAGS (<01, 1-9. 10-14, 15-19, 20-24, 25-29, 30-34, 35-39, 40-49, 50+)
+# _____________________________________________________________________________________
 
 fine_u1 <- finaldata$ageasentered %in% c("<01", "<=02 Months", "02 - 12 Months", "<02 Months")
 fine_1.9 <- finaldata$ageasentered %in% c("01-09", "01-04", "05-09")
@@ -290,7 +301,7 @@ fine_30.34 <- finaldata$ageasentered %in% c("30-34")
 fine_35.39 <- finaldata$ageasentered %in% c("35-39")
 fine_40.49 <- finaldata$ageasentered %in% c("40-49")
 fine_50plus <- finaldata$ageasentered %in% c("50+")
-fine_incompatable <- finaldata$ageasentered %in% c("15+", "<15", "02 Months - 09 Years", "<10", 
+fine_incompatable <- finaldata$ageasentered %in% c("15+", "<15", "02 Months - 09 Years", "<10", "25-49", "30-49",
                                                    "18-24", "25+", "<18", "18+", "05-14", "20+", "01-14")
 
 finaldata$agefine[fine_u1] <- "<01"
@@ -303,12 +314,55 @@ finaldata$agefine[fine_30.34] <- "30-34"
 finaldata$agefine[fine_35.39] <- "35-39"
 finaldata$agefine[fine_40.49] <- "40-49"
 finaldata$agefine[fine_50plus] <- "50+"
-finaldata$agefine[fine_incompatable] <- "Not fine compatable"
+finaldata$agefine[fine_incompatable] <- "Not fine age compatable"
+
+# _____________________________
+#
+#  OVC AGE DISAGS (<18, 18+)
+# _____________________________ 
+
+ovc_18plus <- finaldata$ageasentered %in% c("20-24" , "25-49", "50+", "25-29", "30-49", "18-24", "25+",
+                                            "30-34", "35-39", "40-49", "18+", "20+")
+ovc_u18 <- finaldata$ageasentered %in% c("<01" , "<15", "01-09", "10-14", "<=02 Months",
+                                         "02 - 12 Months", "02 Months - 09 Years", "<02 Months",
+                                         "<10", "01-04", "05-09", "05-14", "01-14", "15-17", "<18")
+ovc_incompatable <- finaldata$ageasentered %in% c("15+", "15-19")
+
+finaldata$ageovc[ovc_18plus] <- "18+"
+finaldata$ageovc[ovc_u18] <- "<18"
+finaldata$ageovc[ovc_incompatable] <- "Not OVC age compatable"
+
+# ___________________________________ 
+#
+#  VMMC AGE DISAGS (<15, 15-29, 30+)
+# ___________________________________ 
+
+vmmc_30plus <- finaldata$ageasentered %in% c("50+", "30-49", "30-34", "35-39", "40-49")
+vmmc_15.29 <- finaldata$ageasentered %in% c("15-19","20-24" ,"25-29", "15-17", "18-24")
+vmmc_u15 <- finaldata$ageasentered %in% c("<01" , "<15", "01-09", "10-14", "<=02 Months",
+                                          "02 - 12 Months", "02 Months - 09 Years", "<02 Months",
+                                          "<10", "01-04", "05-09", "05-14", "01-14")
+vmmc_incompatable <- finaldata$ageasentered %in% c("<18", "25-49","15+", "25+", "18+", "20+")
+
+finaldata$agevmmc[vmmc_30plus] <- "30+"
+finaldata$agevmmc[vmmc_15.29] <- "15-29"
+finaldata$agevmmc[vmmc_u15] <- "<15"
+finaldata$agevmmc[vmmc_incompatable] <- "Not vmmc age compatable"
 
 
-#####################################
-# RENAME THE HIV TESTING MODALITIES 
-#####################################
+# ____________________ 
+#
+#  FIX VARIOUS LABELS 
+# ____________________ 
+
+finaldata$sex[finaldata$sex == "Unknown Sex"] <- "Unknown"
+
+
+
+# ____________________________________
+#
+#  RENAME THE HIV TESTING MODALITIES 
+# ____________________________________
 
 finaldata$modality <- ifelse(finaldata$modality == "OtherMod", "Other Community",
                              ifelse(finaldata$modality == "IndexMod", "Community Index",
@@ -349,16 +403,21 @@ finaldata$modality <- ifelse(finaldata$modality == "OtherMod", "Other Community"
 
 
 
-################################################
-# RENAME THE COLUMN HEADINGS FROM ALL LOWERCASE
-################################################
+# ________________________________________________
+#
+#  RENAME THE COLUMN HEADINGS FROM ALL LOWERCASE 
+# ________________________________________________
 
 names(finaldata)[names(finaldata) == 'operatingunit'] <- 'Operating Unit'
+names(finaldata)[names(finaldata) == 'countryname'] <- 'Country'
 names(finaldata)[names(finaldata) == 'snu1'] <- 'SNU'
 names(finaldata)[names(finaldata) == 'psnu'] <- 'PSNU'
-names(finaldata)[names(finaldata) == 'currentsnuprioritization'] <- 'Current SNU Prioritization'
+names(finaldata)[names(finaldata) == 'psnuuid'] <- 'PSNU UID'
+names(finaldata)[names(finaldata) == 'snu1uid'] <- 'SNU UID'
+names(finaldata)[names(finaldata) == 'snuprioritization'] <- 'SNU Prioritization'
 names(finaldata)[names(finaldata) == 'dreams'] <- 'DREAMS'
 names(finaldata)[names(finaldata) == 'primepartner'] <- 'Prime Partner'
+names(finaldata)[names(finaldata) == 'indicatortype'] <- 'Indicator Type'
 names(finaldata)[names(finaldata) == 'fundingagency'] <- 'Funding Agency'
 names(finaldata)[names(finaldata) == 'implementingmechanismname'] <- 'Implementing Mechanism Name'
 names(finaldata)[names(finaldata) == 'numeratordenom'] <- 'Numerator Denom'
@@ -369,11 +428,15 @@ names(finaldata)[names(finaldata) == 'ageasentered'] <- 'Age As Entered'
 names(finaldata)[names(finaldata) == 'agefine'] <- 'Age Fine'
 names(finaldata)[names(finaldata) == 'agesemifine'] <- 'Age Semifine'
 names(finaldata)[names(finaldata) == 'agecoarse'] <- 'Age Coarse'
+names(finaldata)[names(finaldata) == 'ageovc'] <- 'Age OVC'
+names(finaldata)[names(finaldata) == 'agevmmc'] <- 'Age VMMC'
+
+
 
 
 
 #finaldata$values<-format(finaldata$values, digits=1)
 finaldata = mutate_if(finaldata, is.numeric, as.integer)
 
-write_tsv(finaldata, "FY18Q2.PSNU.IM.2018.05.30.txt")
+write_tsv(finaldata, "FY18Q2.PSNU.IM.2018.06.13.txt")
 
