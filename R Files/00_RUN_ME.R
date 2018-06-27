@@ -9,8 +9,8 @@ memory.limit(size=56000)
 
 # FILE PATHS
 datapath<-"~/GitHub/Me_One_Last_Kiss/Data"
-scriptpath <- "~/GitHub/Me_One_Last_Kiss/R Files"
-setwd(scriptpath)
+#scriptpath <- "~/GitHub/Me_One_Last_Kiss/R Files"
+#setwd(scriptpath)
 
 # LOAD STRUCTURED DATASET
 datafile<- "ICPI_MER_Structured_Dataset_PSNU_IM_FY17-18_20180515_v1_1.txt"
@@ -19,4 +19,4 @@ datafile<- "ICPI_MER_Structured_Dataset_PSNU_IM_FY17-18_20180515_v1_1.txt"
 # ONCE YOU HAVE RUN IT ONE TIME AND HAVE THE CLEAN FILE, YOU CAN START DIRECTLY WITH 02_FY18Q2Tableau.R
 
 #source("01_Consolidate IP Names.R")
-source("02_FY18Q2Tableau.R")
+source("R Files/02_FY18Q2Tableau.R")
