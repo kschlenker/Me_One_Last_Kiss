@@ -9,11 +9,11 @@ pacman::p_load("tidyverse", "magrittr", "ICPIutilities")
 memory.limit(size=56000)
 
 # FILE PATHS
-datapath<-"~/GitHub/Me_One_Last_Kiss/Data"
+datapath<-"~/GitHub/ICPI/Data"
 #scriptpath <- "~/GitHub/Me_One_Last_Kiss/R Files"
 #setwd(scriptpath)
 
-# LOAD STRUCTURED DATASET
+# NAME STRUCTURED DATASET
 datafile<- "ICPI_MER_Structured_Dataset_PSNU_IM_FY17-18_20180515_v1_1.txt"
 
 # YOU NEED TO RUN 01_Consolidate IP Names.R ONLY ONCE TO CREATE THE "CLEAN" DATASET.
