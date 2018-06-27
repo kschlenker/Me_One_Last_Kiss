@@ -2,8 +2,8 @@
 # ALL CODE CAN BE FOUND ON github.com/noahbartlett/Me_One_Last_Kiss
 
 # INSTALL LIBRARIES
-pacman::p_load("tidyverse", "magrittr")
 devtools::install_github("ICPI/ICPIutilities")
+pacman::p_load("tidyverse", "magrittr", "ICPIutilities")
 
 # INCREASE MEMORY
 memory.limit(size=56000)
