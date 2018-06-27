@@ -9,7 +9,7 @@ pacman::p_load("tidyverse", "magrittr", "ICPIutilities")
 memory.limit(size=56000)
 
 # FILE PATHS
-datapath<-"~/GitHub/ICPI/Data"
+datapath<-"~/Me_One_Last_Kiss/Data"
 #scriptpath <- "~/GitHub/Me_One_Last_Kiss/R Files"
 #setwd(scriptpath)
 
