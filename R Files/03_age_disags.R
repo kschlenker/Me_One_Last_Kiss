@@ -11,10 +11,11 @@ finaldata$ageovc=NA
 finaldata$agevmmc=NA
 
 
-# _____________________________
+# ___________________________________________________
 #
-#  COARSE AGE DISAGS (<15, 15+)
-# _____________________________ 
+#  COARSE AGE DISAGS (<15, 15+) 
+#           FOR OVC: (<18, 18+)
+# ___________________________________________________
 
 coarse_15plus <- finaldata$ageasentered %in% c("20-24" , "25-49", "15+", "50+", "15-19", 
                                                "25-29", "30-49", "15-17", "18-24", "25+",
@@ -28,6 +29,22 @@ finaldata$agecoarse[coarse_15plus] <- "15+"
 finaldata$agecoarse[coarse_u15] <- "<15"
 finaldata$agecoarse[coarse_incompatable] <- "Not coarse age compatable"
 
+
+ovc_18plus <- grepl("OVC", finaldata$indicator) & 
+  finaldata$ageasentered %in% c("20-24" , "25-49", "50+", "25-29", "30-49", 
+                                "18-24", "25+", "30-34", "35-39", "40-49", "18+", "20+")
+
+
+ovc_u18 <- grepl("OVC", finaldata$indicator) & 
+  finaldata$ageasentered %in% c("<01" , "<15", "01-09", "10-14", "<=02 Months",
+                                "02 - 12 Months", "02 Months - 09 Years", "<02 Months",
+                                "<10", "01-04", "05-09", "05-14", "01-14", "15-17", "<18")
+
+ovc_incompatable <- grepl("OVC", finaldata$indicator) & finaldata$ageasentered %in% c("15+", "15-19")
+
+finaldata$agecoarse[ovc_18plus] <- "18+"
+finaldata$agecoarse[ovc_u18] <- "<18"
+finaldata$agecoarse[ovc_incompatable] <- "Not coarse age compatable"
 
 # __________________________________________________________________
 #
@@ -84,21 +101,6 @@ finaldata$agefine[fine_40.49] <- "40-49"
 finaldata$agefine[fine_50plus] <- "50+"
 finaldata$agefine[fine_incompatable] <- "Not fine age compatable"
 
-# _____________________________
-#
-#  OVC AGE DISAGS (<18, 18+)
-# _____________________________ 
-
-ovc_18plus <- finaldata$ageasentered %in% c("20-24" , "25-49", "50+", "25-29", "30-49", "18-24", "25+",
-                                            "30-34", "35-39", "40-49", "18+", "20+")
-ovc_u18 <- finaldata$ageasentered %in% c("<01" , "<15", "01-09", "10-14", "<=02 Months",
-                                         "02 - 12 Months", "02 Months - 09 Years", "<02 Months",
-                                         "<10", "01-04", "05-09", "05-14", "01-14", "15-17", "<18")
-ovc_incompatable <- finaldata$ageasentered %in% c("15+", "15-19")
-
-finaldata$ageovc[ovc_18plus] <- "18+"
-finaldata$ageovc[ovc_u18] <- "<18"
-finaldata$ageovc[ovc_incompatable] <- "Not OVC age compatable"
 
 # ___________________________________ 
 #
