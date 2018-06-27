@@ -21,25 +21,28 @@ data <- read_rds(file.path(datapath, "ICPI_MER_Structured_Dataset_PSNU_IM_FY17-1
 data[is.na(data)] <- 0
 
 #########################################################################################
+# Select a subset of indicators to be included in the Tableau tool
+#########################################################################################
+
+data <- data %>% 
+  filter(indicator %in% c("GEND_GBV", "HRH_PRE", "HTS_SELF", "HTS_TST",
+                          "HTS_TST_NEG", "HTS_TST_POS", "KP_MAT", "KP_PREV",
+                          "OVC_SERV", "OVC_SERV_OVER_18", "OVC_SERV_UNDER_18", 
+                          "PMTCT_ART", "PMTCT_EID", "PMTCT_EID_Less_Equal_Two_Months",
+                          "PMTCT_EID_Two_Twelve_Months","PMTCT_EID_POS", "PMTCT_STAT", 
+                          "PMTCT_STAT_KnownatEntry_POSITIVE" , "PMTCT_STAT_NewlyIdentified_Negative", 
+                          "PMTCT_STAT_NewlyIdentified_POSITIVE", "PMTCT_STAT_POS", "PP_PREV",
+                          "PrEP_NEW", "TB_ART", "TB_STAT", "TX_CURR", "TX_NEW", "TX_PVLS",
+                          "TX_RET", "TX_TB", "VMMC_CIRC")) 
+
+#########################################################################################
 # For non-q4 data, add a YTD column
 #########################################################################################
 
 # data$fy2018apr=data$fy2018q1 # <- For Q1
 data$fy2018apr <- ifelse(data$indicator == "TX_CURR", data$fy2018q2, (data$fy2018q1 + data$fy2018q2)) # <- For Q2
 
-#########################################################################################
-# Select a subset of indicators to be included in the Tableau tool
-#########################################################################################
 
-data <- data[(data$indicator %in% c("GEND_GBV", "HRH_PRE", "HTS_SELF", "HTS_TST",
-                                    "HTS_TST_NEG", "HTS_TST_POS", "KP_MAT", "KP_PREV",
-                                    "OVC_SERV", "OVC_SERV_OVER_18", "OVC_SERV_UNDER_18", 
-                                    "PMTCT_ART", "PMTCT_EID", "PMTCT_EID_Less_Equal_Two_Months",
-                                    "PMTCT_EID_Two_Twelve_Months","PMTCT_EID_POS", "PMTCT_STAT", 
-                                    "PMTCT_STAT_KnownatEntry_POSITIVE" , "PMTCT_STAT_NewlyIdentified_Negative", 
-                                    "PMTCT_STAT_NewlyIdentified_POSITIVE", "PMTCT_STAT_POS", "PP_PREV",
-                                    "PrEP_NEW", "TB_ART", "TB_STAT", "TX_CURR", "TX_NEW", "TX_PVLS",
-                                    "TX_RET", "TX_TB", "VMMC_CIRC")),] 
 
 ###################################
 # Add DREAMS Districts to file
