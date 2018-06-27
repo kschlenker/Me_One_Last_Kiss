@@ -7,7 +7,6 @@
 finaldata$agecoarse=NA
 finaldata$agesemifine=NA
 finaldata$agefine=NA
-finaldata$ageovc=NA
 finaldata$agevmmc=NA
 
 
