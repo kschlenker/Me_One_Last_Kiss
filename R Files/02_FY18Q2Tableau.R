@@ -39,9 +39,8 @@ data <- data %>%
 # For non-q4 data, add a YTD column
 #########################################################################################
 
-# data$fy2018apr=data$fy2018q1 # <- For Q1
-data$fy2018apr <- ifelse(data$indicator == "TX_CURR", data$fy2018q2, (data$fy2018q1 + data$fy2018q2)) # <- For Q2
-
+data <- add_cumulative(data) %>% 
+  rename(fy2018apr = fy2018cum)
 
 
 ###################################
