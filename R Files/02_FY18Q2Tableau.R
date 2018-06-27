@@ -15,24 +15,9 @@
 
 # Import data (Change as needed)
 # Uses the PSNU_IM file, already run through the Consolidate IP names code
-data=read.csv(file.path(datapath, "ICPI_MER_Structured_Dataset_PSNU_IM_FY17-18_20180515_v1_1_FV_Clean.txt"),sep="\t",header = T)
+data <- read_rds(file.path(datapath, "ICPI_MER_Structured_Dataset_PSNU_IM_FY17-18_20180515_v1_1_FV_Clean.rds"))
 
-#################
-##   This section was put in for Q2 because the data were being loaded as factors not as integers
-##   We were in a hurry to get the data out.
-##   This code was written like this because every other attempt I tried crashed my computer.
-##   When we have more time, can someone help me "clean" this section up so it's more efficient?
-####################
-
-data[,35]<-as.integer(as.character(data[,35]))
-data[,36]<-as.integer(as.character(data[,36]))
-data[,37]<-as.integer(as.character(data[,37]))
-data[,38]<-as.integer(as.character(data[,38]))
-data[,39]<-as.integer(as.character(data[,39]))
-data[,40]<-as.integer(as.character(data[,40]))
-data[,41]<-as.integer(as.character(data[,41]))
-data[,42]<-as.integer(as.character(data[,42]))
-data[,43]<-as.integer(as.character(data[,43]))
+#replace any NAs with 0
 data[is.na(data)] <- 0
 
 #########################################################################################
