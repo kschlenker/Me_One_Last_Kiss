@@ -42,6 +42,8 @@ data <- data %>%
 data <- add_cumulative(data) %>% 
   rename(fy2018apr = fy2018cum)
 
+#generate net new
+  data <- combine_netnew(data)
 
 ###################################
 # Add DREAMS Districts to file
@@ -76,44 +78,6 @@ dreams<-c(
 
 # Creates a TRUE/FALSE column if PSNU is listed above as a DREAMS district
 data$dreams <- data$psnu %in% dreams
-
-# ________________________
-#
-#  ADD TX_NET_NEW TO FILE
-# ________________________
-
-# Create new dataframe with just TX_CURR
-net_new= data %>%
-  filter(indicator=="TX_CURR")                    
-
-# Calculate TX_NET_NEW and creates new columns for each Q and/or FY
-net_new<-     
-  net_new %>% 
-  mutate_at(vars(starts_with("fy2")),funs(ifelse(is.na(.),0,.))) %>%   
-  mutate(indicator="TX_NET_NEW",
-         y2017q1=fy2017q1+0,
-         y2017q2=fy2017q2-fy2017q1,
-         y2017q3=fy2017q3-fy2017q2,
-         y2017q4=fy2017q4-fy2017q3,
-         y2017apr=fy2017q4+0,
-         y2018q1=fy2018q1-fy2017q4,
-         y2018q2=fy2018q2-fy2018q1,
-         y2018apr=fy2018q2-fy2017apr)  # <- ADD NECESSARY VARIABLES EACH QUARTER #
-
-# Delete old columns
-net_new=
-  net_new %>% 
-  select(-starts_with("fy20"))
-
-# Rename new columns with correct names (i.e. fy2016q1)
-names(net_new) <- gsub("y2", "fy2", names(net_new))
-
-# Corrects for an error involving vectors in R
-data$indicator <- as.character(data$indicator)
-data$fy2018q2 <- as.integer(data$fy2018q2)
-
-# Adds TX_NET_NEW dataframe to FactView dataframe
-data.netnew=bind_rows(data,net_new)
 
 
 # ___________________________________
