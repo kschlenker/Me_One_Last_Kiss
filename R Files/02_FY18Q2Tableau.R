@@ -113,17 +113,9 @@ data$dreams <- data$psnu %in% dreams
   #replace all zeros with NA  
   data_long[data_long == 0] <- NA
 
-# Changes quarters into dates - PART 2
-#     YES - I know there are better ways to do this. But this works. And frankly, finding
-#     another solution was harder than it should have been. 
-
-finaldata$period[finaldata$period=="17q1"] <- "10/1/2016"
-finaldata$period[finaldata$period=="17q2"] <- "1/1/2017"
-finaldata$period[finaldata$period=="17q3"] <- "4/1/2017"
-finaldata$period[finaldata$period=="17q4"] <- "7/1/2017"
-finaldata$period[finaldata$period=="18q1"] <- "10/1/2017"
-finaldata$period[finaldata$period=="18q2"] <- "1/1/2018"
-#finaldata$period[finaldata$period=="18q3"] <- "4/1/2018"
+# Changes quarters into dates
+  data_long <- data_long %>% 
+    mutate(period = yq(period)  %m-% months(3))
 
 
 
