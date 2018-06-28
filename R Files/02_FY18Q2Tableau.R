@@ -97,7 +97,7 @@ TableauColumns<-c("operatingunit", "countryname", "snu1", "snu1uid", "psnu", "ps
 
 # Create results dataframe. Only collects quarterly data starting in FY2015Q3
 results<- data %>%
-  select(TableauColumns, starts_with("fy2")) %>% 
+  select(TableauColumns, contains("q")) %>% 
   
   # Columns that will be used in Tableau.
   group_by_at(TableauColumns) %>%
