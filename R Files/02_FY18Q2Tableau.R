@@ -91,13 +91,13 @@ data$dreams <- data$psnu %in% dreams
 # These are the columns which will be included in Tableau
 # This list can be modified as needed.
 TableauColumns<-c("operatingunit", "countryname", "snu1", "snu1uid", "psnu", "psnuuid", "snuprioritization", "dreams",
-                  "primepartner", "fundingagency","implementingmechanismname", 
+                  "primepartner", "fundingagency", "mechanismid","implementingmechanismname", 
                   "indicator","numeratordenom", "indicatortype","standardizeddisaggregate", 
                   "ageasentered", "agefine", "agesemifine", "agecoarse", "sex","resultstatus","otherdisaggregate","modality", "ismcad")
 
 # Create results dataframe. Only collects quarterly data starting in FY2015Q3
-results<- data.netnew %>%
-  select(-contains("targets"), -contains("apr")) %>% 
+results<- data %>%
+  select(TableauColumns, starts_with("fy2")) %>% 
   
   # Columns that will be used in Tableau.
   group_by_at(TableauColumns) %>%
@@ -110,8 +110,8 @@ results<- data.netnew %>%
 
 
 # Create targets dataframe for FY16 and FY17 targets
-targets<- data.netnew %>%
-  select(-contains("apr"),-contains("Q")) %>% 
+targets<- data %>%
+  select(TableauColumns, ends_with("targets")) %>% 
   
   # Columns that will be used in Tableau.
   group_by_at(TableauColumns) %>%
@@ -123,8 +123,8 @@ targets<- data.netnew %>%
   filter(values !=0)
 
 # Create APR dataframe for FY15, FY16, FY17 APR results
-apr<- data.netnew %>%
-  select(-contains("targets"),-contains("Q") ) %>% 
+apr<- data %>%
+  select(TableauColumns, ends_with("apr")) %>% 
   
   # Columns that will be used in Tableau.
   group_by_at(TableauColumns) %>%
@@ -226,4 +226,4 @@ finaldata = mutate_if(finaldata, is.numeric, as.integer)
 
 write_tsv(finaldata, file.path(datapath,"FY18Q2.PSNU.IM.2018.06.14.txt"))
 
-rm(TableauColumns, dreams, apr, results, targets, data.netnew, net_new)
+rm(TableauColumns, dreams, apr, results, targets, data, net_new)
