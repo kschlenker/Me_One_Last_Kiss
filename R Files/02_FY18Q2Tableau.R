@@ -85,78 +85,33 @@ data$dreams <- data$psnu %in% dreams
 #  RESHAPE DATA FOR USE IN TABLEAU
 # ___________________________________
 
-
-# Create three dataframes - Results, Targets and APR - to be combined.
-
-# These are the columns which will be included in Tableau
-# This list can be modified as needed.
-TableauColumns<-c("operatingunit", "countryname", "snu1", "snu1uid", "psnu", "psnuuid", "snuprioritization", "dreams",
-                  "primepartner", "fundingagency", "mechanismid","implementingmechanismname", 
-                  "indicator","numeratordenom", "indicatortype","standardizeddisaggregate", 
-                  "ageasentered", "agefine", "agesemifine", "agecoarse", "sex","resultstatus","otherdisaggregate","modality", "ismcad")
+  TableauColumns<-c("operatingunit", "countryname", "snu1", "snu1uid", "psnu", "psnuuid", "snuprioritization", "dreams",
+                    "primepartner", "fundingagency", "mechanismid","implementingmechanismname", 
+                    "indicator","numeratordenom", "indicatortype","standardizeddisaggregate", 
+                    "ageasentered", "agefine", "agesemifine", "agecoarse", "sex","resultstatus","otherdisaggregate",
+                    "modality", "ismcad", "resultsortargets", "period")
 
 # Create results dataframe. Only collects quarterly data starting in FY2015Q3
-results<- data %>%
-  select(TableauColumns, contains("q")) %>% 
-  
-  # Columns that will be used in Tableau.
-  group_by_at(TableauColumns) %>%
-  
-  # Creates one values column and one period column (e.g. FY2017Q3)
-  summarize_at(vars(starts_with("fy2")), funs(sum(., na.rm=TRUE))) %>%
-  ungroup %>%
-  gather(period, values, starts_with("fy2")) %>% 
-  filter(values !=0)
-
-
-# Create targets dataframe for FY16 and FY17 targets
-targets<- data %>%
-  select(TableauColumns, ends_with("targets")) %>% 
-  
-  # Columns that will be used in Tableau.
-  group_by_at(TableauColumns) %>%
-  
-  # Creates one values column and one period column (e.g. FY2016_Targets)
-  summarize_at(vars(starts_with("fy2")), funs(sum(., na.rm=TRUE))) %>%
-  ungroup %>%
-  gather(period, values, starts_with("fy2")) %>%
-  filter(values !=0)
-
-# Create APR dataframe for FY15, FY16, FY17 APR results
-apr<- data %>%
-  select(TableauColumns, ends_with("apr")) %>% 
-  
-  # Columns that will be used in Tableau.
-  group_by_at(TableauColumns) %>%
-  
-  # Creates one values column and one period column (e.g. FY2016APR)
-  summarize_at(vars(starts_with("fy2")), funs(sum(., na.rm=TRUE))) %>%
-  ungroup %>%
-  gather(period, values, starts_with("fy2")) %>%
-  filter(values !=0)
-
-# Creates a column in each dataframe to label values either Results or Targets
-results$ResultsOrTargets<-"Quarterly Results"
-targets$ResultsOrTargets<-"Targets"
-apr$ResultsOrTargets<-"Annual Results"
-
-
-# Changes quarters into dates - PART 1 
-#     Will change back to quarters in Tableau
-#     Why do we have to do this? Because Tableau assumes that Q1 starts in January. 
-#     Although you can set Tableau to have fiscal years have an October start, by that 
-#     time, Tableau has already assigned the quarterly data to have a January start
-#     and your dates will all be off by one quarter. 
-
-results$period<- gsub("fy20", "",results$period)
-targets$period<- gsub("fy20", "",targets$period)
-apr$period<- gsub("fy20", "",apr$period)
-targets$period<- gsub("_targets", "q1",targets$period)
-apr$period<- gsub("apr", "q1",apr$period)
-
-
-# Combines all three dataframes into one
-finaldata=bind_rows(results, targets, apr)
+  data_long <- data %>%
+    #reshape long
+    gather(period, values, starts_with("fy2"), na.rm = TRUE) %>% 
+    #remove zero values
+    filter(values !=0) %>% 
+    mutate(resultsortargets = case_when(str_detect(period, "q\\d$") ~ "Quarterly Results",
+                                        str_detect(period, "apr$")    ~ "Annual Results",
+                                        str_detect(period, "targets$") ~ "Targets"),
+           period = str_remove(period, "fy20"),
+           period = str_replace(period, "_targets|apr", "q1"),
+           results = ifelse(resultsortargets == "Quarterly Results", values, NA),
+           apr = ifelse(resultsortargets == "Annual Results", values, NA),
+           targets = ifelse(resultsortargets == "Targets", values, NA)) %>% 
+    # Columns that will be used in Tableau.
+    group_by_at(TableauColumns) %>%
+    # aggregate so all targets/apr are on q1 line
+    summarize_at(vars(results, apr, targets), funs(sum(., na.rm=TRUE))) %>%
+    ungroup() 
+  #replace all zeros with NA  
+  data_long[data_long == 0] <- NA
 
 # Changes quarters into dates - PART 2
 #     YES - I know there are better ways to do this. But this works. And frankly, finding
