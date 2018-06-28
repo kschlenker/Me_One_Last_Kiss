@@ -91,7 +91,7 @@ data$dreams <- data$psnu %in% dreams
 # These are the columns which will be included in Tableau
 # This list can be modified as needed.
 TableauColumns<-c("operatingunit", "countryname", "snu1", "snu1uid", "psnu", "psnuuid", "snuprioritization", "dreams",
-                  "primepartner", "fundingagency","implementingmechanismname", "mechanismuid",
+                  "primepartner", "fundingagency","implementingmechanismname", 
                   "indicator","numeratordenom", "indicatortype","standardizeddisaggregate", 
                   "ageasentered", "agefine", "agesemifine", "agecoarse", "sex","resultstatus","otherdisaggregate","modality", "ismcad")
 
