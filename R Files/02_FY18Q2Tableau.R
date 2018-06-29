@@ -72,10 +72,11 @@
     # Zimbabwe
     "Bulawayo", "Chipinge", "Gweru" , "Makoni", "Mazowe", "Mutare")
 
-
+  
 # Creates a TRUE/FALSE column if PSNU is listed above as a DREAMS district
   data$dreams <- data$psnu %in% dreams
-
+  
+  rm(dreams)
 
 # ___________________________________
 #
@@ -95,7 +96,7 @@
   targets <- reshape_long(data, "targets")
 #bind together 
   data_long <- bind_rows(results, apr, targets)
-    rm(results, apr, targets, data)
+    rm(results, apr, targets, data, TableauColumns)
   
   data_long <- data_long %>%
     mutate(resultsortargets = case_when(str_detect(period, "q\\d$") ~ "Quarterly Results",
@@ -113,6 +114,8 @@
   finaldata <- data_long %>% 
     mutate(period = yq(period)  %m-% months(3))
 
+  rm(data_long)
+  
 # RUN "AGE DISAGGREGATION" R CODE
   source(file.path("R Files", "03_age_disags.R"))
 
@@ -132,7 +135,28 @@
   source(file.path("R Files","05_central_mechs.R"))
 
 #convert numbers to integers
-  finaldata = mutate_if(finaldata, is.numeric, as.integer)
+  finaldata <- mutate_if(finaldata, is.numeric, as.integer)
+  
+#rename to upper case for Tableau
+  finaldata <- rename(`PSNU`  = psnu,
+                      `PSNU UID`  = psnuuid,
+                      `SNU UID`  = snu1uid,
+                      `SNU Prioritization`  = snuprioritization,
+                      `DREAMS`  = dreams,
+                      `Prime Partner`  = primepartner,
+                      `Indicator Type`  = indicatortype,
+                      `Funding Agency`  = fundingagency,
+                      `Implementing Mechanism Name`  = implementingmechanismname,
+                      `Numerator Denom`  = numeratordenom,
+                      `Standardized Disaggregate`  = standardizeddisaggregate,
+                      `Result Status`  = resultstatus,
+                      `Other Disaggregate`  = otherdisaggregate,
+                      `Age As Entered`  = ageasentered,
+                      `Age Fine`  = agefine,
+                      `Age Semifine`  = agesemifine,
+                      `Age Coarse`  = agecoarse,
+                      `Age OVC`  = ageovc,
+                      `Age VMMC`  = agevmmc)
 
 #export
   write_tsv(finaldata, file.path(datapath,"FY18Q2.PSNU.IM.2018.06.14.txt"))
