@@ -120,7 +120,7 @@ data$dreams <- data$psnu %in% dreams
 
 
 # RUN "AGE DISAGGREGATION" R CODE
-source("03_age_disags.R")
+source(file.path("R Files", "03_age_disags.R"))
 
 
 # ____________________ 
