@@ -138,25 +138,25 @@
   finaldata <- mutate_if(finaldata, is.numeric, as.integer)
   
 #rename to upper case for Tableau
-  finaldata <- rename(`PSNU`  = psnu,
-                      `PSNU UID`  = psnuuid,
-                      `SNU UID`  = snu1uid,
-                      `SNU Prioritization`  = snuprioritization,
-                      `DREAMS`  = dreams,
-                      `Prime Partner`  = primepartner,
-                      `Indicator Type`  = indicatortype,
-                      `Funding Agency`  = fundingagency,
-                      `Implementing Mechanism Name`  = implementingmechanismname,
-                      `Numerator Denom`  = numeratordenom,
-                      `Standardized Disaggregate`  = standardizeddisaggregate,
-                      `Result Status`  = resultstatus,
-                      `Other Disaggregate`  = otherdisaggregate,
-                      `Age As Entered`  = ageasentered,
-                      `Age Fine`  = agefine,
-                      `Age Semifine`  = agesemifine,
-                      `Age Coarse`  = agecoarse,
-                      `Age OVC`  = ageovc,
-                      `Age VMMC`  = agevmmc)
+  finaldata <- finaldata %>% 
+    rename(`PSNU`  = psnu,
+           `PSNU UID`  = psnuuid,
+           `SNU UID`  = snu1uid,
+           `SNU Prioritization`  = snuprioritization,
+           `DREAMS`  = dreams,
+           `Prime Partner`  = primepartner,
+           `Indicator Type`  = indicatortype,
+           `Funding Agency`  = fundingagency,
+           `Implementing Mechanism Name`  = implementingmechanismname,
+           `Numerator Denom`  = numeratordenom,
+           `Standardized Disaggregate`  = standardizeddisaggregate,
+           `Result Status`  = resultstatus,
+           `Other Disaggregate`  = otherdisaggregate,
+           `Age As Entered`  = ageasentered,
+           `Age Fine`  = agefine,
+           `Age Semifine`  = agesemifine,
+           `Age Coarse`  = agecoarse,
+           `Age VMMC`  = agevmmc)
 
 #export
   write_tsv(finaldata, file.path(datapath,"FY18Q2.PSNU.IM.2018.06.14.txt"))
