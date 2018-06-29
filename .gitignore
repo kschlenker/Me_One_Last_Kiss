@@ -5,3 +5,4 @@
 *.Rds
 /Data
 .Rproj.user
+Data/*

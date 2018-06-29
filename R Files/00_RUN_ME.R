@@ -9,6 +9,7 @@ pacman::p_load("tidyverse", "lubridate","ICPIutilities")
 memory.limit(size=56000)
 
 # FILE PATHS
+dir.create("Data") #create a folder to store the MSD (not stored on GitHub)
 datapath<-"Data"
 
 # NAME STRUCTURED DATASET
