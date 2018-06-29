@@ -132,10 +132,10 @@ finaldata$sex[finaldata$sex == "Unknown Sex"] <- "Unknown"
 
 
 # RUN "HIV Testing MOdality" R CODE
-source("04_HIV_Testing_Modalities.R")
+source(file.path("R Files","04_HIV_Testing_Modalities.R"))
 
 # RUN "Central Mechanisms" R CODE
-source("05_central_mechs.R")
+source(file.path("R Files","05_central_mechs.R"))
 
 # ________________________________________________
 #
