@@ -3,7 +3,7 @@
 
 # INSTALL LIBRARIES
 devtools::install_github("ICPI/ICPIutilities")
-pacman::p_load("tidyverse", "ICPIutilities")
+pacman::p_load("tidyverse", "lubridate","ICPIutilities")
 
 # INCREASE MEMORY
 memory.limit(size=56000)
