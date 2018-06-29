@@ -8,7 +8,7 @@
 
 #import Archived MSD for TX_NET_NEW Calculation (need FY16Q4 to calc NET NEW in FY17Q1)
   df_tx_old <- read_msd(file.path(datapath,datafile_archive), save_rds = FALSE) %>% 
-    filter(df_tx_old, indicator == "TX_CURR")
+    filter(indicator == "TX_CURR")
   
 #limit just to just meta data (string vars), excluding partner/mech and other UIDs that may lead to misalignment in merge
   lst_meta <- df_tx_old %>% 

@@ -17,9 +17,6 @@
 # Uses the PSNU_IM file, already run through the Consolidate IP names code
   data <- read_rds(file.path(datapath, "ICPI_MER_Structured_Dataset_PSNU_IM_FY17-18_20180515_v1_1_FV_Clean.rds"))
 
-#replace any NAs with 0
-  data[is.na(data)] <- 0
-
 #########################################################################################
 # Select a subset of indicators to be included in the Tableau tool
 #########################################################################################
@@ -75,10 +72,11 @@
     # Zimbabwe
     "Bulawayo", "Chipinge", "Gweru" , "Makoni", "Mazowe", "Mutare")
 
-
+  
 # Creates a TRUE/FALSE column if PSNU is listed above as a DREAMS district
   data$dreams <- data$psnu %in% dreams
-
+  
+  rm(dreams)
 
 # ___________________________________
 #
@@ -89,14 +87,18 @@
                     "primepartner", "fundingagency", "mechanismid","implementingmechanismname", 
                     "indicator","numeratordenom", "indicatortype","standardizeddisaggregate", 
                     "ageasentered", "agefine", "agesemifine", "agecoarse", "sex","resultstatus","otherdisaggregate",
-                    "modality", "ismcad", "resultsortargets", "period")
+                    "modality", "ismcad")
 
-# Create results dataframe. Only collects quarterly data starting in FY2015Q3
-  data_long <- data %>%
-    #reshape long
-    gather(period, values, starts_with("fy2"), na.rm = TRUE) %>% 
-    #remove zero values
-    filter(values !=0) %>% 
+# reshape long separately due to file size
+  source(file.path("R Files", "06_reshape_long.R"))
+  results <- reshape_long(data, "results")
+  apr <- reshape_long(data, "apr")
+  targets <- reshape_long(data, "targets")
+#bind together 
+  data_long <- bind_rows(results, apr, targets)
+    rm(results, apr, targets, data, TableauColumns)
+  
+  data_long <- data_long %>%
     mutate(resultsortargets = case_when(str_detect(period, "q\\d$") ~ "Quarterly Results",
                                         str_detect(period, "apr$")    ~ "Annual Results",
                                         str_detect(period, "targets$") ~ "Targets"),
@@ -104,12 +106,7 @@
            period = str_replace(period, "_targets|apr", "q1"),
            results = ifelse(resultsortargets == "Quarterly Results", values, NA),
            apr = ifelse(resultsortargets == "Annual Results", values, NA),
-           targets = ifelse(resultsortargets == "Targets", values, NA)) %>% 
-    # Columns that will be used in Tableau.
-    group_by_at(TableauColumns) %>%
-    # aggregate so all targets/apr are on q1 line
-    summarize_at(vars(results, apr, targets), funs(sum(., na.rm=TRUE))) %>%
-    ungroup() 
+           targets = ifelse(resultsortargets == "Targets", values, NA))
   #replace all zeros with NA  
   data_long[data_long == 0] <- NA
 
@@ -117,8 +114,8 @@
   finaldata <- data_long %>% 
     mutate(period = yq(period)  %m-% months(3))
 
-
-
+  rm(data_long)
+  
 # RUN "AGE DISAGGREGATION" R CODE
   source(file.path("R Files", "03_age_disags.R"))
 
@@ -138,7 +135,28 @@
   source(file.path("R Files","05_central_mechs.R"))
 
 #convert numbers to integers
-  finaldata = mutate_if(finaldata, is.numeric, as.integer)
+  finaldata <- mutate_if(finaldata, is.numeric, as.integer)
+  
+#rename to upper case for Tableau
+  finaldata <- finaldata %>% 
+    rename(`PSNU`  = psnu,
+           `PSNU UID`  = psnuuid,
+           `SNU UID`  = snu1uid,
+           `SNU Prioritization`  = snuprioritization,
+           `DREAMS`  = dreams,
+           `Prime Partner`  = primepartner,
+           `Indicator Type`  = indicatortype,
+           `Funding Agency`  = fundingagency,
+           `Implementing Mechanism Name`  = implementingmechanismname,
+           `Numerator Denom`  = numeratordenom,
+           `Standardized Disaggregate`  = standardizeddisaggregate,
+           `Result Status`  = resultstatus,
+           `Other Disaggregate`  = otherdisaggregate,
+           `Age As Entered`  = ageasentered,
+           `Age Fine`  = agefine,
+           `Age Semifine`  = agesemifine,
+           `Age Coarse`  = agecoarse,
+           `Age VMMC`  = agevmmc)
 
 #export
   write_tsv(finaldata, file.path(datapath,"FY18Q2.PSNU.IM.2018.06.14.txt"))
