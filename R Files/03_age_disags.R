@@ -13,17 +13,18 @@ datafinal <- datafinal %>%
 #           FOR OVC: (<18, 18+)
 # ___________________________________________________
 
-coarse_15plus <- finaldata$ageasentered %in% c("20-24" , "25-49", "15+", "50+", "15-19", 
-                                               "25-29", "30-49", "15-17", "18-24", "25+",
-                                               "30-34", "35-39", "40-49", "18+", "20+")
-coarse_u15 <- finaldata$ageasentered %in% c("<01" , "<15", "01-09", "10-14", "<=02 Months",
-                                            "02 - 12 Months", "02 Months - 09 Years", "<02 Months",
-                                            "<10", "01-04", "05-09", "05-14", "01-14")
-coarse_incompatable <- finaldata$ageasentered %in% c("<18")
 
-finaldata$agecoarse[coarse_15plus] <- "15+"
-finaldata$agecoarse[coarse_u15] <- "<15"
-finaldata$agecoarse[coarse_incompatable] <- "Not coarse age compatable"
+datafinal <- datafinal %>% 
+  mutate(agecoarse = case_when(ageasentered %in% c("20-24" , "25-49", "15+", "50+", "15-19", 
+                                                   "25-29", "30-49", "15-17", "18-24", "25+",
+                                                   "30-34", "35-39", "40-49", "18+", "20+")          ~ "15+",
+                               ageasentered %in% c("<01" , "<15", "01-09", "10-14", 
+                                                   "<=02 Months", "02 - 12 Months", 
+                                                   "02 Months - 09 Years", "<02 Months",
+                                                   "<10", "01-04", "05-09", "05-14", "01-14")        ~ "<15",
+                               ageasentered == "<18"                                                 ~ "Not coarse age compatable")
+  )
+                        
 
 
 ovc_18plus <- grepl("OVC", finaldata$indicator) & 
