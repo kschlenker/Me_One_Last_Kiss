@@ -59,30 +59,15 @@ finaldata <- finaldata %>%
 #  FINE AGE DISAGS (<01, 1-9. 10-14, 15-19, 20-24, 25-29, 30-34, 35-39, 40-49, 50+)
 # _____________________________________________________________________________________
 
-fine_u1 <- finaldata$ageasentered %in% c("<01", "<=02 Months", "02 - 12 Months", "<02 Months")
-fine_1.9 <- finaldata$ageasentered %in% c("01-09", "01-04", "05-09")
-fine_10.14 <- finaldata$ageasentered %in% c("10-14")
-fine_15.19 <- finaldata$ageasentered %in% c("15-19", "15-17")
-fine_20.24 <- finaldata$ageasentered %in% c("20-24" )
-fine_25.29 <- finaldata$ageasentered %in% c("25-29")
-fine_30.34 <- finaldata$ageasentered %in% c("30-34")
-fine_35.39 <- finaldata$ageasentered %in% c("35-39")
-fine_40.49 <- finaldata$ageasentered %in% c("40-49")
-fine_50plus <- finaldata$ageasentered %in% c("50+")
-fine_incompatable <- finaldata$ageasentered %in% c("15+", "<15", "02 Months - 09 Years", "<10", "25-49", "30-49",
-                                                   "18-24", "25+", "<18", "18+", "05-14", "20+", "01-14")
 
-finaldata$agefine[fine_u1] <- "<01"
-finaldata$agefine[fine_1.9] <- "01-09"
-finaldata$agefine[fine_10.14] <- "10-14"
-finaldata$agefine[fine_15.19] <- "15-19"
-finaldata$agefine[fine_20.24] <- "20-24"
-finaldata$agefine[fine_25.29] <- "25-29"
-finaldata$agefine[fine_30.34] <- "30-34"
-finaldata$agefine[fine_35.39] <- "35-39"
-finaldata$agefine[fine_40.49] <- "40-49"
-finaldata$agefine[fine_50plus] <- "50+"
-finaldata$agefine[fine_incompatable] <- "Not fine age compatable"
+finaldata <- finaldata %>% 
+  mutate(agefine = case_when(ageasentered %in% c("<01", "<=02 Months", "02 - 12 Months", "<02 Months")          ~ "<01",
+                             ageasentered %in% c("01-09", "01-04", "05-09")                                     ~ "01-09",
+                             ageasentered %in% c("15-19", "15-17")                                              ~ "15-19",
+                             ageasentered %in% c("10-14", "20-24", "25-29", "30-34", "35-39", "40-49", "50+")   ~ ageasentered,
+                             ageasentered %in% c("15+", "<15", "02 Months - 09 Years", "<10", "25-49", "30-49", 
+                                                 "18-24", "25+", "<18", "18+", "05-14", "20+", "01-14")         ~ "Not fine age compatable")
+         )
 
 
 # ___________________________________ 
