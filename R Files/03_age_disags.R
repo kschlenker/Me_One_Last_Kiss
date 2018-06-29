@@ -42,24 +42,16 @@ finaldata <- finaldata %>%
 #  SEMIFINE AGE DISAGS (<01, 1-9. 10-14, 15-19, 20-24, 25-49, 50+)
 # __________________________________________________________________
 
-semifine_u1 <- finaldata$ageasentered %in% c("<01", "<=02 Months", "02 - 12 Months", "<02 Months")
-semifine_1.9 <- finaldata$ageasentered %in% c("01-09", "01-04", "05-09")
-semifine_10.14 <- finaldata$ageasentered %in% c("10-14")
-semifine_15.19 <- finaldata$ageasentered %in% c("15-19", "15-17")
-semifine_20.24 <- finaldata$ageasentered %in% c("20-24" )
-semifine_25.49 <- finaldata$ageasentered %in% c("25-49", "25-29", "30-49", "30-34", "35-39", "40-49")
-semifine_50plus <- finaldata$ageasentered %in% c("50+")
-semifine_incompatable <- finaldata$ageasentered %in% c("15+", "<15", "02 Months - 09 Years", "<10", 
-                                                       "18-24", "25+", "<18", "18+", "05-14", "20+", "01-14")
 
-finaldata$agesemifine[semifine_u1] <- "<01"
-finaldata$agesemifine[semifine_1.9] <- "01-09"
-finaldata$agesemifine[semifine_10.14] <- "10-14"
-finaldata$agesemifine[semifine_15.19] <- "15-19"
-finaldata$agesemifine[semifine_20.24] <- "20-24"
-finaldata$agesemifine[semifine_25.49] <- "25-49"
-finaldata$agesemifine[semifine_50plus] <- "50+"
-finaldata$agesemifine[semifine_incompatable] <- "Not semifine age compatable"
+finaldata <- finaldata %>% 
+  mutate(agesemifine = case_when(ageasentered %in% c("<01", "<=02 Months", "02 - 12 Months", "<02 Months")  ~ "<01",
+                                 ageasentered %in% c("01-09", "01-04", "05-09")                             ~ "01-09",
+                                 ageasentered %in% c("10-14", "20-24", "50+")                               ~ ageasentered,
+                                 ageasentered %in% c("15-19", "15-17")                                      ~ "15-19",
+                                 ageasentered %in% c("25-49", "25-29", "30-49", "30-34", "35-39", "40-49")  ~ "25-49",
+                                 ageasentered %in% c("15+", "<15", "02 Months - 09 Years", "<10", 
+                                                     "18-24", "25+", "<18", "18+", "05-14", "20+", "01-14") ~ "Not semifine age compatable"))
+
 
 
 # _____________________________________________________________________________________
