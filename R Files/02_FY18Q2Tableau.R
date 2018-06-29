@@ -17,9 +17,6 @@
 # Uses the PSNU_IM file, already run through the Consolidate IP names code
   data <- read_rds(file.path(datapath, "ICPI_MER_Structured_Dataset_PSNU_IM_FY17-18_20180515_v1_1_FV_Clean.rds"))
 
-#replace any NAs with 0
-  data[is.na(data)] <- 0
-
 #########################################################################################
 # Select a subset of indicators to be included in the Tableau tool
 #########################################################################################
