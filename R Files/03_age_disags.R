@@ -3,11 +3,8 @@
 #  -------------------------  AGE DISAGS  ------------------------- 
 # __________________________________________________________________
 
-
-finaldata$agecoarse=NA
-finaldata$agesemifine=NA
-finaldata$agefine=NA
-finaldata$agevmmc=NA
+datafinal <- datafinal %>% 
+  mutate_at(vars(agecoarse, agesemifine, agefine), ~ NA)
 
 
 # ___________________________________________________
