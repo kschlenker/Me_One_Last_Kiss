@@ -88,12 +88,16 @@
                     "ageasentered", "agefine", "agesemifine", "agecoarse", "sex","resultstatus","otherdisaggregate",
                     "modality", "ismcad", "resultsortargets", "period")
 
-# Create results dataframe. Only collects quarterly data starting in FY2015Q3
-  data_long <- data %>%
-    #reshape long
-    gather(period, values, starts_with("fy2"), na.rm = TRUE) %>% 
-    #remove zero values
-    filter(values !=0) %>% 
+# reshape long separately due to file size
+  source(file.path("R Files", "06_reshape_long.R"))
+  results <- reshape_long(data, "results")
+  apr <- reshape_long(data, "apr")
+  targets <- reshape_long(data, "targets")
+#bind together 
+  data_long <- bind_rows(results, apr, targets)
+    rm(results, apr, targets, data)
+  
+  data_long <- data_long %>%
     mutate(resultsortargets = case_when(str_detect(period, "q\\d$") ~ "Quarterly Results",
                                         str_detect(period, "apr$")    ~ "Annual Results",
                                         str_detect(period, "targets$") ~ "Targets"),
@@ -101,20 +105,13 @@
            period = str_replace(period, "_targets|apr", "q1"),
            results = ifelse(resultsortargets == "Quarterly Results", values, NA),
            apr = ifelse(resultsortargets == "Annual Results", values, NA),
-           targets = ifelse(resultsortargets == "Targets", values, NA)) %>% 
-    # Columns that will be used in Tableau.
-    group_by_at(TableauColumns) %>%
-    # aggregate so all targets/apr are on q1 line
-    summarize_at(vars(results, apr, targets), funs(sum(., na.rm=TRUE))) %>%
-    ungroup() 
+           targets = ifelse(resultsortargets == "Targets", values, NA))
   #replace all zeros with NA  
   data_long[data_long == 0] <- NA
 
 # Changes quarters into dates
   finaldata <- data_long %>% 
     mutate(period = yq(period)  %m-% months(3))
-
-
 
 # RUN "AGE DISAGGREGATION" R CODE
   source(file.path("R Files", "03_age_disags.R"))
