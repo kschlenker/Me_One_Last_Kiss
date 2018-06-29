@@ -86,7 +86,7 @@
                     "primepartner", "fundingagency", "mechanismid","implementingmechanismname", 
                     "indicator","numeratordenom", "indicatortype","standardizeddisaggregate", 
                     "ageasentered", "agefine", "agesemifine", "agecoarse", "sex","resultstatus","otherdisaggregate",
-                    "modality", "ismcad", "resultsortargets", "period")
+                    "modality", "ismcad")
 
 # reshape long separately due to file size
   source(file.path("R Files", "06_reshape_long.R"))
