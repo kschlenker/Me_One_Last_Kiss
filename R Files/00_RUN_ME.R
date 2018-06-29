@@ -9,9 +9,7 @@ pacman::p_load("tidyverse", "lubridate","ICPIutilities")
 memory.limit(size=56000)
 
 # FILE PATHS
-datapath<-"~/GitHub/Me_One_Last_Kiss/Data"
-#scriptpath <- "~/GitHub/Me_One_Last_Kiss/R Files"
-#setwd(scriptpath)
+datapath<-"Data"
 
 # NAME STRUCTURED DATASET
 datafile<- "ICPI_MER_Structured_Dataset_PSNU_IM_FY17-18_20180515_v1_1.txt"
