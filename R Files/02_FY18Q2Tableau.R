@@ -137,37 +137,6 @@ source(file.path("R Files","04_HIV_Testing_Modalities.R"))
 # RUN "Central Mechanisms" R CODE
 source(file.path("R Files","05_central_mechs.R"))
 
-# ________________________________________________
-#
-#  RENAME THE COLUMN HEADINGS FROM ALL LOWERCASE 
-# ________________________________________________
-
-names(finaldata)[names(finaldata) == 'operatingunit'] <- 'Operating Unit'
-names(finaldata)[names(finaldata) == 'countryname'] <- 'Country'
-names(finaldata)[names(finaldata) == 'snu1'] <- 'SNU'
-names(finaldata)[names(finaldata) == 'psnu'] <- 'PSNU'
-names(finaldata)[names(finaldata) == 'psnuuid'] <- 'PSNU UID'
-names(finaldata)[names(finaldata) == 'snu1uid'] <- 'SNU UID'
-names(finaldata)[names(finaldata) == 'snuprioritization'] <- 'SNU Prioritization'
-names(finaldata)[names(finaldata) == 'dreams'] <- 'DREAMS'
-names(finaldata)[names(finaldata) == 'primepartner'] <- 'Prime Partner'
-names(finaldata)[names(finaldata) == 'indicatortype'] <- 'Indicator Type'
-names(finaldata)[names(finaldata) == 'fundingagency'] <- 'Funding Agency'
-names(finaldata)[names(finaldata) == 'implementingmechanismname'] <- 'Implementing Mechanism Name'
-names(finaldata)[names(finaldata) == 'numeratordenom'] <- 'Numerator Denom'
-names(finaldata)[names(finaldata) == 'standardizeddisaggregate'] <- 'Standardized Disaggregate'
-names(finaldata)[names(finaldata) == 'resultstatus'] <- 'Result Status'
-names(finaldata)[names(finaldata) == 'otherdisaggregate'] <- 'Other Disaggregate'
-names(finaldata)[names(finaldata) == 'ageasentered'] <- 'Age As Entered'
-names(finaldata)[names(finaldata) == 'agefine'] <- 'Age Fine'
-names(finaldata)[names(finaldata) == 'agesemifine'] <- 'Age Semifine'
-names(finaldata)[names(finaldata) == 'agecoarse'] <- 'Age Coarse'
-names(finaldata)[names(finaldata) == 'ageovc'] <- 'Age OVC'
-names(finaldata)[names(finaldata) == 'agevmmc'] <- 'Age VMMC'
-
-
-
-
 #finaldata$values<-format(finaldata$values, digits=1)
 finaldata = mutate_if(finaldata, is.numeric, as.integer)
 
