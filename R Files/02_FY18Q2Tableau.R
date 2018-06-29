@@ -114,7 +114,7 @@ data$dreams <- data$psnu %in% dreams
   data_long[data_long == 0] <- NA
 
 # Changes quarters into dates
-  data_long <- data_long %>% 
+  datafinal <- data_long %>% 
     mutate(period = yq(period)  %m-% months(3))
 
 
