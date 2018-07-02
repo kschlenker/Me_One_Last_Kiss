@@ -37,10 +37,19 @@ data[is.na(data)] <- 0
 
 #########################################################################################
 # For non-q4 data, add a YTD column
+# Cumulative for most indicators; but "snapshot" for a few 
 #########################################################################################
 
+snapshot <- c("OVC_SERV", "TB_PREV","TX_CURR", "TX_TB")
+
 # data$fy2018apr=data$fy2018q1 # <- For Q1
-data$fy2018apr <- ifelse(data$indicator == "TX_CURR", data$fy2018q2, (data$fy2018q1 + data$fy2018q2)) # <- For Q2
+data$fy2018apr <- ifelse(data$indicator %in% snapshot, 
+                         data$fy2018q2, (data$fy2018q1 + data$fy2018q2)) # <- For Q2
+# data$fy2018apr <- ifelse(data$indicator %in% snapshot, 
+#                          data$fy2018q2, (data$fy2018q1 + data$fy2018q2 + data$fy2018q3)) # <- For Q3
+# data$fy2018apr <- ifelse(data$indicator %in% snapshot, 
+#                          data$fy2018q2, (data$fy2018q1 + data$fy2018q2 + data$fy2018q3 + data$fy2018q4)) # <- For Q4
+
 
 #########################################################################################
 # Select a subset of indicators to be included in the Tableau tool
@@ -91,13 +100,15 @@ dreams<-c(
 # Creates a TRUE/FALSE column if PSNU is listed above as a DREAMS district
 data$dreams <- data$psnu %in% dreams
 
+rm(dreams)
+
 # ________________________
 #
 #  ADD TX_NET_NEW TO FILE
 # ________________________
 
 # Create new dataframe with just TX_CURR
-net_new= data %>%
+net_new = data %>%
   filter(indicator=="TX_CURR")                    
 
 # Calculate TX_NET_NEW and creates new columns for each Q and/or FY
@@ -141,9 +152,10 @@ data.netnew=bind_rows(data,net_new)
 # These are the columns which will be included in Tableau
 # This list can be modified as needed.
 TableauColumns<-c("operatingunit", "countryname", "snu1", "snu1uid", "psnu", "psnuuid", "snuprioritization", "dreams",
-                  "primepartner", "fundingagency","implementingmechanismname", "mechanismuid",
+                  "primepartner", "fundingagency", "mechanismid", "implementingmechanismname", 
                   "indicator","numeratordenom", "indicatortype","standardizeddisaggregate", 
-                  "ageasentered", "agefine", "agesemifine", "agecoarse", "sex","resultstatus","otherdisaggregate","modality", "ismcad")
+                  "ageasentered", "agefine", "agesemifine", "agecoarse", "sex","resultstatus","otherdisaggregate",
+                  "modality", "ismcad")
 
 # Create results dataframe. Only collects quarterly data starting in FY2015Q3
 results<- data.netnew %>%
