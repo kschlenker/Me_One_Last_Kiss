@@ -88,12 +88,15 @@
 #  RESHAPE DATA FOR USE IN TABLEAU
 # ___________________________________
 
+#limit to just key variables used
   TableauColumns<-c("operatingunit", "countryname", "snu1", "snu1uid", "psnu", "psnuuid", "snuprioritization", "dreams",
                     "primepartner", "fundingagency", "mechanismid","implementingmechanismname", 
                     "indicator","numeratordenom", "indicatortype","standardizeddisaggregate", 
                     "ageasentered", "agefine", "agesemifine", "agecoarse", "sex","resultstatus","otherdisaggregate",
-                    "modality", "ismcad")
-
+                    "modality")
+  data <- select(data, TableauColumns, starts_with("fy"))
+  rm(TableauColumns)
+     
 # reshape long separately due to file size
   source(file.path("R Files", "06_reshape_long.R"))
   results <- reshape_long(data, "results")
@@ -112,7 +115,8 @@
            results = ifelse(resultsortargets == "Quarterly Results", values, NA),
            apr = ifelse(resultsortargets == "Annual Results", values, NA),
            targets = ifelse(resultsortargets == "Targets", values, NA))
-  #replace all zeros with NA  
+  
+#replace all zeros with NA  
   data_long[data_long == 0] <- NA
 
 # Changes quarters into dates
@@ -186,4 +190,4 @@
 #export
   write_tsv(finaldata, file.path(datapath,paste0("FY18Q2.PSNU.IM.", Sys.Date(),".txt")))
 
-rm(TableauColumns, dreams, data, finaldata)
+rm(data, finaldata)
