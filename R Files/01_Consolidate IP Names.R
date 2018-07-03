@@ -33,7 +33,7 @@
   df_merge <- select(df_merge, lst_meta, fy2016q4, everything())
 
 #apply "offical" names to partners/implementing mechs
-  df_final<- rename_official(df)
+  df_final<- rename_official(df_merge)
 
 #export as RDS
   write_rds(df_final, file.path(datapath, "ICPI_MER_Structured_Dataset_PSNU_IM_FY17-18_20180515_v2_1_FV_Clean.rds"), compress = "gz")
