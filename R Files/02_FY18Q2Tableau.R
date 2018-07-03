@@ -23,9 +23,12 @@
 
   tokeep <- read_csv("SupportingDocs/ind_to_keep.csv") %>% 
           filter(keep == "X")
+  
   #inner join to keep only rows that match ind/disagg in the tokeep df
   data <- inner_join(data, tokeep)
+  data <- select(data, -keep)
     rm(tokeep)
+    
   #update some disaggs for continunity
   data <- data %>% 
     filter((standardizeddisaggregate != "Transferred out - non PEPFAR Support Partner" & 
