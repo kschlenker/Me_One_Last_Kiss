@@ -25,8 +25,18 @@
           filter(keep == "X")
   #inner join to keep only rows that match ind/disagg in the tokeep df
   data <- inner_join(data, tokeep)
-  
+    rm(tokeep)
+  #update some disaggs for continunity
+  data <- data %>% 
+    filter((standardizeddisaggregate != "Transferred out - non PEPFAR Support Partner" & 
+              otherdisaggregate != "Transferred out - non PEPFAR Support Partner")) %>% #duplicates Transferred in FY17
+    mutate(standardizeddisaggregate = ifelse(standardizeddisaggregate == "TransferExit", "ProgramStatus", standardizeddisaggregate),
+           otherdisaggregate = ifelse(otherdisaggregate %in% c("Transferred out - non PEPFAR Support Partner", "Transferred out - PEPFAR Support Partner"), "Transferred", otherdisaggregate),
+           sex = ifelse(indicator == "PMTCT_ART", "Female", sex),
+           standardizeddisaggregate = ifelse(indicator %in% c("TB_ART", "TX_TB") & standardizeddisaggregate == "Age Aggregated/Sex", "Age Aggregated/Sex/HIVStatus", standardizeddisaggregate),
+           standardizeddisaggregate = ifelse(indicator == "TB_ART" & standardizeddisaggregate == "Age/Sex", "Age/Sex/HIVStatus", standardizeddisaggregate))
 
+  
 #########################################################################################
 # For non-q4 data, add a YTD column
 #########################################################################################
