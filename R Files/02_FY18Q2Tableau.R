@@ -49,7 +49,8 @@
 #generate net new
   data <- combine_netnew(data)
 
-###################################
+
+  ###################################
 # Add DREAMS Districts to file
 ###################################
 
@@ -96,8 +97,12 @@
                     "indicator","numeratordenom", "indicatortype","standardizeddisaggregate", 
                     "ageasentered", "agefine", "agesemifine", "agecoarse", "sex","resultstatus","otherdisaggregate",
                     "modality")
-  data <- select(data, TableauColumns, starts_with("fy"))
-  rm(TableauColumns)
+  val_cols <- data %>% 
+    select(starts_with("fy")) %>% 
+    names()
+  sel_cols <- c(TableauColumns, val_cols)
+  data <- select_at(data, sel_cols)
+    rm(val_cols, sel_cols, TableauColumns)
      
 # reshape long separately due to file size
   source(file.path("R Files", "06_reshape_long.R"))
