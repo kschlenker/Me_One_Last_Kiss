@@ -138,8 +138,23 @@
   finaldata <- finaldata %>% 
     mutate(sex = ifelse(sex == "Unknown Sex", "Unknown", sex))
 
-# RUN "HIV Testing MOdality" R CODE
-  source(file.path("R Files","04_HIV_Testing_Modalities.R"))
+# adjust modality names
+  finaldata <- finaldata %>% 
+    mutate(modality = case_when(modality == "Emergency Ward"                     ~ "Emergency",
+                                modality == "HomeMod"                            ~ "Community Home-Based",
+                                modality == "IndexMod"                           ~ "Community Index",
+                                modality == "Inpat"                              ~ "Inpatient",
+                                modality == "MobileMod"                          ~ "Community Mobile",
+                                modality == "OtherMod"                           ~ "Other Community",
+                                modality == "OtherPITC"                          ~ "Other PITC",
+                                modality == "PMTCT ANC"                          ~ "PMTCT (ANC)",
+                                modality == "STI Clinic"                         ~ "STI",
+                                modality == "TBClinic"                           ~ "TB",
+                                modality == "VCTMod"                             ~ "Community VCT",
+                                modality %in% c("Index" , "Malnutrition", 
+                                                "Pediatric", "VCT", "VMMC")      ~ modality)
+    ) 
+  
 
 # RUN "Central Mechanisms" R CODE
   source(file.path("R Files","05_central_mechs.R"))
