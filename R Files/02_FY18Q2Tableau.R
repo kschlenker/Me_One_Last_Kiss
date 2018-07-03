@@ -31,8 +31,7 @@
     
   #update some disaggs for continunity
   data <- data %>% 
-    filter((standardizeddisaggregate != "Transferred out - non PEPFAR Support Partner" & 
-              otherdisaggregate != "Transferred out - non PEPFAR Support Partner")) %>% #duplicates Transferred in FY17
+    filter(standardizeddisaggregate != "ProgramStatus" | otherdisaggregate != "Transferred out - non PEPFAR Support Partner") %>% #duplicates Transferred in FY17
     mutate(standardizeddisaggregate = ifelse(standardizeddisaggregate == "TransferExit", "ProgramStatus", standardizeddisaggregate),
            otherdisaggregate = ifelse(otherdisaggregate %in% c("Transferred out - non PEPFAR Support Partner", "Transferred out - PEPFAR Support Partner"), "Transferred", otherdisaggregate),
            sex = ifelse(indicator == "PMTCT_ART", "Female", sex),
