@@ -1,0 +1,159 @@
+indicator,standardizeddisaggregate,keep
+GEND_GBV,Age/Sex,
+GEND_GBV,Age/Sex/ViolenceType,X
+GEND_GBV,PEP,X
+GEND_GBV,Total Numerator,X
+GEND_GBV,ViolenceServiceType,
+HRH_PRE,Grad Cadre,
+HRH_PRE,Total Numerator,X
+HTS_SELF,Age/Sex/HIVSelfTest,X
+HTS_SELF,HIVSelfTest,
+HTS_SELF,HIVSelfTestUser,
+HTS_SELF,KeyPop/HIVSelfTest,X
+HTS_SELF,Total Numerator,X
+HTS_TST,Age Aggregated/Sex,
+HTS_TST,Age Aggregated/Sex/Result,
+HTS_TST,Age/Sex/Result,
+HTS_TST,AgeAboveTen/Sex,
+HTS_TST,AgeAboveTen/Sex/Positive,
+HTS_TST,AgeLessThanTen,
+HTS_TST,AgeLessThanTen/Positive,
+HTS_TST,CommunityDeliveryPoint,
+HTS_TST,FacilityDeliveryPoint,
+HTS_TST,KeyPop/Result,X
+HTS_TST,Modality/Age Aggregated/Sex/Result,X
+HTS_TST,Modality/Age/Sex/Result,X
+HTS_TST,Modality/MostCompleteAgeDisagg,
+HTS_TST,MostCompleteAgeDisagg,
+HTS_TST,Positive,
+HTS_TST,Results,
+HTS_TST,ServiceDeliveryPoint,
+HTS_TST,ServiceDeliveryPoint/Result,
+HTS_TST,Total Numerator,X
+HTS_TST_NEG,Age Aggregated/Sex/Result,
+HTS_TST_NEG,Age/Sex/Result,
+HTS_TST_NEG,KeyPop/Result,X
+HTS_TST_NEG,Modality/Age Aggregated/Sex/Result,X
+HTS_TST_NEG,Modality/Age/Sex/Result,X
+HTS_TST_NEG,Modality/MostCompleteAgeDisagg,
+HTS_TST_NEG,Results,
+HTS_TST_NEG,ServiceDeliveryPoint/Result,
+HTS_TST_NEG,Total Numerator,X
+HTS_TST_POS,Age Aggregated/Sex/Result,
+HTS_TST_POS,Age/Sex/Result,
+HTS_TST_POS,AgeAboveTen/Sex/Positive,
+HTS_TST_POS,AgeLessThanTen/Positive,
+HTS_TST_POS,KeyPop/Result,X
+HTS_TST_POS,Modality/Age Aggregated/Sex/Result,X
+HTS_TST_POS,Modality/Age/Sex/Result,X
+HTS_TST_POS,Modality/MostCompleteAgeDisagg,
+HTS_TST_POS,MostCompleteAgeDisagg,
+HTS_TST_POS,Positive,
+HTS_TST_POS,ServiceDeliveryPoint/Result,
+HTS_TST_POS,Total Numerator,
+KP_MAT,Sex,X
+KP_MAT,Total Numerator,X
+KP_PREV,KeyPop,
+KP_PREV,KeyPop/Status,X
+KP_PREV,Total Denominator,
+KP_PREV,Total Numerator,X
+OVC_SERV,Age/Sex,X
+OVC_SERV,Age/Sex/Service,X
+OVC_SERV,ProgramStatus,X
+OVC_SERV,Total Numerator,X
+OVC_SERV,TransferExit,X
+OVC_SERV_OVER_18,Total Numerator,
+OVC_SERV_UNDER_18,Total Numerator,
+PMTCT_ART,MaternalRegimenType,
+PMTCT_ART,NewExistingArt/Sex/HIVStatus,X
+PMTCT_ART,Total Denominator,
+PMTCT_ART,Total Numerator,X
+PMTCT_EID,Age,
+PMTCT_EID,Age/HIVStatus,X
+PMTCT_EID,InfantTest,
+PMTCT_EID,Total Numerator,X
+PMTCT_EID_Less_Equal_Two_Months,Total Numerator,
+PMTCT_EID_POS,Total Numerator,
+PMTCT_EID_Two_Twelve_Months,Total Numerator,
+PMTCT_STAT,Age/Sex,X
+PMTCT_STAT,Age/Sex/KnownNewResult,X
+PMTCT_STAT,Known/New,
+PMTCT_STAT,Known/New/Age,
+PMTCT_STAT,Total Denominator,X
+PMTCT_STAT,Total Numerator,X
+PMTCT_STAT_KnownatEntry_POSITIVE,Total Numerator,
+PMTCT_STAT_NewlyIdentified_Negative,Total Numerator,
+PMTCT_STAT_NewlyIdentified_POSITIVE,Total Numerator,
+PMTCT_STAT_POS,Age/Sex/KnownNewResult,X
+PMTCT_STAT_POS,Known/New,
+PMTCT_STAT_POS,Known/New/Age,X
+PMTCT_STAT_POS,Total Numerator,X
+PP_PREV,Age Aggregated/Sex,X
+PP_PREV,Age/Sex,X
+PP_PREV,Status,
+PP_PREV,Total Denominator,X
+PP_PREV,Total Numerator,X
+PrEP_NEW,Age/Sex,X
+PrEP_NEW,KeyPopAbr,X
+PrEP_NEW,Total Numerator,X
+TB_ART,Age,
+TB_ART,Age Aggregated/Sex,X
+TB_ART,Age Aggregated/Sex/HIVStatus,X
+TB_ART,Age/Sex,X
+TB_ART,Age/Sex/HIVStatus,
+TB_ART,NewExistingArt/HIVStatus,
+TB_ART,Sex,
+TB_ART,Total Denominator,
+TB_ART,Total Numerator,X
+TB_STAT,Age,
+TB_STAT,Age Aggregated/Sex,X
+TB_STAT,Age Aggregated/Sex/KnownNewPosNeg,X
+TB_STAT,Results,
+TB_STAT,Sex,
+TB_STAT,Total Denominator,X
+TB_STAT,Total Numerator,X
+TX_CURR,Age Aggregated/Sex/HIVStatus,X
+TX_CURR,Age/Sex/HIVStatus,X
+TX_CURR,MostCompleteAgeDisagg,
+TX_CURR,Total Numerator,X
+TX_NEW,Age Aggregated/Sex/HIVStatus,X
+TX_NEW,Age/Sex/HIVStatus,X
+TX_NEW,KeyPop/HIVStatus,X
+TX_NEW,MostCompleteAgeDisagg,
+TX_NEW,PregnantOrBreastfeeding/HIVStatus,
+TX_NEW,TB Diagnosis,
+TX_NEW,TB Diagnosis/HIVStatus,
+TX_NEW,Total Numerator,X
+TX_PVLS,Age Aggregated/Sex,
+TX_PVLS,Age Aggregated/Sex/Indication/HIVStatus,X
+TX_PVLS,Age/Sex/Indication/HIVStatus,X
+TX_PVLS,PregnantOrBreastfeeding/Indication/HIVStatus,
+TX_PVLS,RoutineTargeted,
+TX_PVLS,RoutineTargeted/HIVStatus,
+TX_PVLS,Total Denominator,X
+TX_PVLS,Total Numerator,X
+TX_RET,12mo,
+TX_RET,24mo,
+TX_RET,36mo,
+TX_RET,Age Aggregated/Sex,X
+TX_RET,Age/Sex,X
+TX_RET,PregnantOrBreastfeeding/HIVStatus,
+TX_RET,Total Denominator,X
+TX_RET,Total Numerator,X
+TX_TB,Age Aggregated/Sex,X
+TX_TB,Age Aggregated/Sex/HIVStatus,X
+TX_TB,HIVStatus,
+TX_TB,NewExistingArt/HIVStatus,
+TX_TB,PositiveScreen,
+TX_TB,Specimen Sent,
+TX_TB,Specimen Sent/HIVStatus,
+TX_TB,TB Test Type/HIVStatus,
+TX_TB,TBScreen/NewExistingART/HIVStatus,
+TX_TB,Total Denominator,X
+TX_TB,Total Numerator,X
+VMMC_CIRC,Age/Sex,X
+VMMC_CIRC,HIVStatus/Sex,X
+VMMC_CIRC,TechFollowUp/Sex,
+VMMC_CIRC,TechFollowUp>14days/Sex,
+VMMC_CIRC,Technique/Sex,
+VMMC_CIRC,Total Numerator,X
