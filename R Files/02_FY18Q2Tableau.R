@@ -135,8 +135,8 @@
 #  FIX VARIOUS LABELS 
 # ____________________ 
 
-  finaldata$sex[finaldata$sex == "Unknown Sex"] <- "Unknown"
-
+  finaldata <- finaldata %>% 
+    mutate(sex = ifelse(sex == "Unknown Sex", "Unknown", sex))
 
 # RUN "HIV Testing MOdality" R CODE
   source(file.path("R Files","04_HIV_Testing_Modalities.R"))
