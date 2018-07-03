@@ -121,8 +121,13 @@
 
   rm(data_long)
   
-# RUN "AGE DISAGGREGATION" R CODE
-  source(file.path("R Files", "03_age_disags.R"))
+# vmmc age bands variable
+  finaldata <- finaldata %>% 
+    mutate(agevmmc = case_when(ageasentered %in% c("30-49", "30-34", "35-39", "40-49", "50+")               ~ "30+",
+                               ageasentered %in% c("15-19","20-24" ,"25-29")                                ~ "15-29",
+                               ageasentered %in% c("<01", "<02 Months", "02 - 12 Months", "01-09","10-14")  ~ "<15",
+                               TRUE                                                                         ~ "Not vmmc age compatable")
+    )
 
 
 # ____________________ 
