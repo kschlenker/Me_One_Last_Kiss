@@ -15,22 +15,17 @@
 
 # Import data (Change as needed)
 # Uses the PSNU_IM file, already run through the Consolidate IP names code
-  data <- read_rds(file.path(datapath, "ICPI_MER_Structured_Dataset_PSNU_IM_FY17-18_20180515_v1_1_FV_Clean.rds"))
+  data <- read_rds(file.path(datapath, "ICPI_MER_Structured_Dataset_PSNU_IM_FY17-18_20180515_v2_1_FV_Clean.Rds"))
 
 #########################################################################################
 # Select a subset of indicators to be included in the Tableau tool
 #########################################################################################
 
-  data <- data %>% 
-    filter(indicator %in% c("GEND_GBV", "HRH_PRE", "HTS_SELF", "HTS_TST",
-                            "HTS_TST_NEG", "HTS_TST_POS", "KP_MAT", "KP_PREV",
-                            "OVC_SERV", "OVC_SERV_OVER_18", "OVC_SERV_UNDER_18", 
-                            "PMTCT_ART", "PMTCT_EID", "PMTCT_EID_Less_Equal_Two_Months",
-                            "PMTCT_EID_Two_Twelve_Months","PMTCT_EID_POS", "PMTCT_STAT", 
-                            "PMTCT_STAT_KnownatEntry_POSITIVE" , "PMTCT_STAT_NewlyIdentified_Negative", 
-                            "PMTCT_STAT_NewlyIdentified_POSITIVE", "PMTCT_STAT_POS", "PP_PREV",
-                            "PrEP_NEW", "TB_ART", "TB_STAT", "TX_CURR", "TX_NEW", "TX_PVLS",
-                            "TX_RET", "TX_TB", "VMMC_CIRC")) 
+  tokeep <- read_csv("SupportingDocs/ind_to_keep.csv") %>% 
+          filter(keep == "X")
+  #inner join to keep only rows that match ind/disagg in the tokeep df
+  data <- inner_join(data, tokeep)
+  
 
 #########################################################################################
 # For non-q4 data, add a YTD column
