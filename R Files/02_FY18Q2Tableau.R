@@ -15,23 +15,30 @@
 
 # Import data (Change as needed)
 # Uses the PSNU_IM file, already run through the Consolidate IP names code
-  data <- read_rds(file.path(datapath, "ICPI_MER_Structured_Dataset_PSNU_IM_FY17-18_20180515_v1_1_FV_Clean.rds"))
+  data <- read_rds(file.path(datapath, "ICPI_MER_Structured_Dataset_PSNU_IM_FY17-18_20180515_v2_1_FV_Clean.Rds"))
 
 #########################################################################################
 # Select a subset of indicators to be included in the Tableau tool
 #########################################################################################
 
+  tokeep <- read_csv("SupportingDocs/ind_to_keep.csv") %>% 
+          filter(keep == "X")
+  
+  #inner join to keep only rows that match ind/disagg in the tokeep df
+  data <- inner_join(data, tokeep)
+  data <- select(data, -keep)
+    rm(tokeep)
+    
+  #update some disaggs for continunity
   data <- data %>% 
-    filter(indicator %in% c("GEND_GBV", "HRH_PRE", "HTS_SELF", "HTS_TST",
-                            "HTS_TST_NEG", "HTS_TST_POS", "KP_MAT", "KP_PREV",
-                            "OVC_SERV", "OVC_SERV_OVER_18", "OVC_SERV_UNDER_18", 
-                            "PMTCT_ART", "PMTCT_EID", "PMTCT_EID_Less_Equal_Two_Months",
-                            "PMTCT_EID_Two_Twelve_Months","PMTCT_EID_POS", "PMTCT_STAT", 
-                            "PMTCT_STAT_KnownatEntry_POSITIVE" , "PMTCT_STAT_NewlyIdentified_Negative", 
-                            "PMTCT_STAT_NewlyIdentified_POSITIVE", "PMTCT_STAT_POS", "PP_PREV",
-                            "PrEP_NEW", "TB_ART", "TB_STAT", "TX_CURR", "TX_NEW", "TX_PVLS",
-                            "TX_RET", "TX_TB", "VMMC_CIRC")) 
+    filter(standardizeddisaggregate != "ProgramStatus" | otherdisaggregate != "Transferred out - non PEPFAR Support Partner") %>% #duplicates Transferred in FY17
+    mutate(standardizeddisaggregate = ifelse(standardizeddisaggregate == "TransferExit", "ProgramStatus", standardizeddisaggregate),
+           otherdisaggregate = ifelse(otherdisaggregate %in% c("Transferred out - non PEPFAR Support Partner", "Transferred out - PEPFAR Support Partner"), "Transferred", otherdisaggregate),
+           sex = ifelse(indicator == "PMTCT_ART", "Female", sex),
+           standardizeddisaggregate = ifelse(indicator %in% c("TB_ART", "TX_TB") & standardizeddisaggregate == "Age Aggregated/Sex", "Age Aggregated/Sex/HIVStatus", standardizeddisaggregate),
+           standardizeddisaggregate = ifelse(indicator == "TB_ART" & standardizeddisaggregate == "Age/Sex", "Age/Sex/HIVStatus", standardizeddisaggregate))
 
+  
 #########################################################################################
 # For non-q4 data, add a YTD column
 #########################################################################################
@@ -42,7 +49,8 @@
 #generate net new
   data <- combine_netnew(data)
 
-###################################
+
+  ###################################
 # Add DREAMS Districts to file
 ###################################
 
@@ -83,12 +91,19 @@
 #  RESHAPE DATA FOR USE IN TABLEAU
 # ___________________________________
 
+#limit to just key variables used
   TableauColumns<-c("operatingunit", "countryname", "snu1", "snu1uid", "psnu", "psnuuid", "snuprioritization", "dreams",
                     "primepartner", "fundingagency", "mechanismid","implementingmechanismname", 
                     "indicator","numeratordenom", "indicatortype","standardizeddisaggregate", 
                     "ageasentered", "agefine", "agesemifine", "agecoarse", "sex","resultstatus","otherdisaggregate",
-                    "modality", "ismcad")
-
+                    "modality")
+  val_cols <- data %>% 
+    select(starts_with("fy")) %>% 
+    names()
+  sel_cols <- c(TableauColumns, val_cols)
+  data <- select_at(data, sel_cols)
+    rm(val_cols, sel_cols, TableauColumns)
+     
 # reshape long separately due to file size
   source(file.path("R Files", "06_reshape_long.R"))
   results <- reshape_long(data, "results")
@@ -107,7 +122,8 @@
            results = ifelse(resultsortargets == "Quarterly Results", values, NA),
            apr = ifelse(resultsortargets == "Annual Results", values, NA),
            targets = ifelse(resultsortargets == "Targets", values, NA))
-  #replace all zeros with NA  
+  
+#replace all zeros with NA  
   data_long[data_long == 0] <- NA
 
 # Changes quarters into dates
@@ -116,8 +132,13 @@
 
   rm(data_long)
   
-# RUN "AGE DISAGGREGATION" R CODE
-  source(file.path("R Files", "03_age_disags.R"))
+# vmmc age bands variable
+  finaldata <- finaldata %>% 
+    mutate(agevmmc = case_when(ageasentered %in% c("30-49", "30-34", "35-39", "40-49", "50+")               ~ "30+",
+                               ageasentered %in% c("15-19","20-24" ,"25-29")                                ~ "15-29",
+                               ageasentered %in% c("<01", "<02 Months", "02 - 12 Months", "01-09","10-14")  ~ "<15",
+                               TRUE                                                                         ~ "Not vmmc age compatable")
+    )
 
 
 # ____________________ 
@@ -125,11 +146,26 @@
 #  FIX VARIOUS LABELS 
 # ____________________ 
 
-  finaldata$sex[finaldata$sex == "Unknown Sex"] <- "Unknown"
+  finaldata <- finaldata %>% 
+    mutate(sex = ifelse(sex == "Unknown Sex", "Unknown", sex))
 
-
-# RUN "HIV Testing MOdality" R CODE
-  source(file.path("R Files","04_HIV_Testing_Modalities.R"))
+# adjust modality names
+  finaldata <- finaldata %>% 
+    mutate(modality = case_when(modality == "Emergency Ward"                     ~ "Emergency",
+                                modality == "HomeMod"                            ~ "Community Home-Based",
+                                modality == "IndexMod"                           ~ "Community Index",
+                                modality == "Inpat"                              ~ "Inpatient",
+                                modality == "MobileMod"                          ~ "Community Mobile",
+                                modality == "OtherMod"                           ~ "Other Community",
+                                modality == "OtherPITC"                          ~ "Other PITC",
+                                modality == "PMTCT ANC"                          ~ "PMTCT (ANC)",
+                                modality == "STI Clinic"                         ~ "STI",
+                                modality == "TBClinic"                           ~ "TB",
+                                modality == "VCTMod"                             ~ "Community VCT",
+                                modality %in% c("Index" , "Malnutrition", 
+                                                "Pediatric", "VCT", "VMMC")      ~ modality)
+    ) 
+  
 
 # RUN "Central Mechanisms" R CODE
   source(file.path("R Files","05_central_mechs.R"))
@@ -159,6 +195,6 @@
            `Age VMMC`  = agevmmc)
 
 #export
-  write_tsv(finaldata, file.path(datapath,"FY18Q2.PSNU.IM.2018.06.14.txt"))
+  write_tsv(finaldata, file.path(datapath,paste0("FY18Q2.PSNU.IM.", Sys.Date(),".txt")))
 
-rm(TableauColumns, dreams, data, finaldata)
+rm(data, finaldata)

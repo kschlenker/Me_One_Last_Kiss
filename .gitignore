@@ -1,7 +1,6 @@
 *.xlsx
 *.xls
 *.txt
-*.csv
 *.Rds
 /Data
 .Rproj.user
